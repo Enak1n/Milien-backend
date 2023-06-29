@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Milien_backend.DataBase;
+﻿using Microsoft.AspNetCore.Mvc;
 using Milien_backend.Models.Requsets;
 using Milien_backend.Services.Interfaces;
 
