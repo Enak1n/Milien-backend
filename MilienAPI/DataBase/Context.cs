@@ -15,5 +15,6 @@ namespace MilienAPI.DataBase
         }
 
         public DbSet<Ad> Ads { get; set; }
+        public DbSet<Favorite> Favorites { get; set; }
     }
 }

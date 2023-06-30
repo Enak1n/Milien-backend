@@ -1,7 +1,9 @@
 ﻿namespace MilienAPI.UnitOfWork.Interfaces
 {
-    public interface IUnitOfWork
+    public interface IUnitOfWork : IDisposable
     {
         IAddRepository Ads { get; }
+
+        Task Save();
     }
 }

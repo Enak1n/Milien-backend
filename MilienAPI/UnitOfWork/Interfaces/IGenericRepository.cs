@@ -1,11 +1,16 @@
-﻿namespace MilienAPI.UnitOfWork.Interfaces
+﻿using System.Linq.Expressions;
+
+namespace MilienAPI.UnitOfWork.Interfaces
 {
     public interface IGenericRepository<T> where T : class
     {
         Task<List<T>> GetAll();
         Task<T> GetById(int id);
-        Task<T> Add(T entity);
-        Task<T> Edit(T entity, List<string> urls);
-        Task Delete(int id);
+        Task Add(T entity);
+        Task AddRange(T entity);
+        Task<T> Edit(T entity);
+        Task Remove(T entity);
+        Task RemoveRange(List<T> entities);
+        Task<List<T>> Find(Expression<Func<T, bool>> predicate);
     }
 }
