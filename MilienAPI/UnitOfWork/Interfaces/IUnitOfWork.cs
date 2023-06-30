@@ -3,6 +3,8 @@
     public interface IUnitOfWork : IDisposable
     {
         IAddRepository Ads { get; }
+        IFavoriteRepository Favorites { get; }
+        ICustomerRepository Customers { get; }
 
         Task Save();
     }

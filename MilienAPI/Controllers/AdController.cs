@@ -15,11 +15,13 @@ namespace MilienAPI.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAdService _adService; 
+        private readonly IFavoriteService _favoriteService;
 
-        public AdController(IUnitOfWork unitOfWork, IAdService adService)
+        public AdController(IUnitOfWork unitOfWork, IAdService adService, IFavoriteService service)
         {
              _unitOfWork = unitOfWork;
             _adService = adService;
+            _favoriteService = service;
         }
 
         [HttpGet]
@@ -129,7 +131,7 @@ namespace MilienAPI.Controllers
         {
             var authorizedUser = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            var ads = await _adService.GetFavoriteAds(authorizedUser);
+            var ads = await _favoriteService.GetFavoriteAds(authorizedUser);
 
             return Ok(ads);
         }
@@ -140,7 +142,7 @@ namespace MilienAPI.Controllers
         {
             var authorizedUser = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            return await _adService.IsFavorite(id, authorizedUser);
+            return await _favoriteService.IsFavorite(id, authorizedUser);
         }
     }
 }

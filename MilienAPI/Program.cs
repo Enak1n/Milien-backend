@@ -8,7 +8,7 @@ using MilienAPI.UnitOfWork;
 using MilienAPI.Services.Interfaces;
 using MilienAPI.Services;
 using Microsoft.OpenApi.Models;
-using System.Reflection;
+using MilienAPI.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,8 +55,10 @@ builder.Services.AddCors(policy => policy.AddPolicy("default", opt =>
 }));
 
 builder.Services.AddScoped<IAdService, AdService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IFavoriteService, FavoriteService>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-//builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

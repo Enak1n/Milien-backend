@@ -12,14 +12,12 @@ namespace MilienAPI.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMemoryCache _cache;
-        private readonly Context _context;
         private Random _random = new();
 
-        public AdService(IUnitOfWork unitOfWork, IMemoryCache memoryCache, Context context)
+        public AdService(IUnitOfWork unitOfWork, IMemoryCache memoryCache)
         {
             _unitOfWork = unitOfWork;
             _cache = memoryCache;
-            _context = context;
 
         }
 
@@ -117,25 +115,25 @@ namespace MilienAPI.Services
             return paginatedData;
         }
 
-        public async Task<List<Ad>> GetFavoriteAds(int userId)
-        {
-            var ads = await _context.Ads.Join(_context.Favorites,
-                ad => ad.Id,
-                favorite => favorite.AdId,
-                (ad, favorite) => new { Ad = ad, Favorite = favorite })
-                .Where(joinResult => joinResult.Favorite.CustomerId == userId)
-                .Select(joinResult => joinResult.Ad)
-                .ToListAsync();
+        //public async Task<List<Ad>> GetFavoriteAds(int userId)
+        //{
+        //    var ads = await _context.Ads.Join(_context.Favorites,
+        //        ad => ad.Id,
+        //        favorite => favorite.AdId,
+        //        (ad, favorite) => new { Ad = ad, Favorite = favorite })
+        //        .Where(joinResult => joinResult.Favorite.CustomerId == userId)
+        //        .Select(joinResult => joinResult.Ad)
+        //        .ToListAsync();
 
-            return ads;
-        }
+        //    return ads;
+        //}
 
-        public async Task<bool> IsFavorite(int id, int userId)
-        {
-            var ads = await _context.Favorites.Where(a => a.AdId == id &&
-            a.CustomerId == userId).FirstOrDefaultAsync();
+        //public async Task<bool> IsFavorite(int id, int userId)
+        //{
+        //    var ads = await _context.Favorites.Where(a => a.AdId == id &&
+        //    a.CustomerId == userId).FirstOrDefaultAsync();
 
-            return ads != null;
-        }
+        //    return ads != null;
+        //}
     }
 }

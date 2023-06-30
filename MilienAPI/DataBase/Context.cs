@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MilienAPI.Models;
 using Npgsql;
-using System.Data;
 
 namespace MilienAPI.DataBase
 {
@@ -12,9 +11,11 @@ namespace MilienAPI.DataBase
         {
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<Role>();
         }
 
         public DbSet<Ad> Ads { get; set; }
         public DbSet<Favorite> Favorites { get; set; }
+        public DbSet<Customer> Customers { get; set; }
     }
 }
