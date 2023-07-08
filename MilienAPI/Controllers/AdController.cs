@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MilienAPI.Helpers;
+using MilienAPI.Models;
+using MilienAPI.Models.Requests;
 using MilienAPI.Services.Interfaces;
 using MilienAPI.UnitOfWork;
 using MilienAPI.UnitOfWork.Interfaces;
@@ -16,12 +20,14 @@ namespace MilienAPI.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAdService _adService; 
         private readonly IFavoriteService _favoriteService;
+        private readonly IMapper _mapper;
 
-        public AdController(IUnitOfWork unitOfWork, IAdService adService, IFavoriteService service)
+        public AdController(IUnitOfWork unitOfWork, IAdService adService, IFavoriteService service, IMapper mapper)
         {
              _unitOfWork = unitOfWork;
             _adService = adService;
             _favoriteService = service;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -37,7 +43,7 @@ namespace MilienAPI.Controllers
         {
             var res = await _adService.GetAdsByCustomerId(customerId);
 
-            return res.Count == 0 ? BadRequest() : Ok(res);
+            return Ok(res);
         }
 
         [HttpGet]
@@ -143,6 +149,44 @@ namespace MilienAPI.Controllers
             var authorizedUser = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             return await _favoriteService.IsFavorite(id, authorizedUser);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> CreateAd([FromForm] AdRequest ad)
+        {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            List<string> uniqueFileNames = new List<string>();
+
+            if (ad.Images != null)
+                uniqueFileNames = FileUploader.UploadImageToServer(ad.Images, "/var/images");
+
+            var createdAd = _mapper.Map<AdRequest, Ad>(ad);
+
+            createdAd.PhotoPath = uniqueFileNames.ToArray();
+            createdAd.CustomerId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            await _unitOfWork.Ads.Add(createdAd);
+
+            await _unitOfWork.Save();
+
+            return Ok(createdAd);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> AddToFavorite([FromBody] int id)
+        {
+            var authorizedUser = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            Favorite favorite = new Favorite(authorizedUser, id);
+
+            await _unitOfWork.Favorites.Add(favorite);
+            await _unitOfWork.Save();
+
+            return Ok();
         }
     }
 }

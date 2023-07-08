@@ -39,7 +39,8 @@ builder.Services.AddAuthentication(options =>
             ValidAudience = audience,
             ValidateLifetime = true,
             IssuerSigningKey = signingKey,
-            ValidateIssuerSigningKey = true
+            ValidateIssuerSigningKey = true,
+            ClockSkew = TimeSpan.Zero
         };
     });
 
@@ -48,7 +49,6 @@ builder.Services.AddCors(policy => policy.AddPolicy("default", opt =>
     opt.WithOrigins("localhost:3000", "https://localhost:3000", "http://localhost:3000",
                     "xn--h1agbg8e4a.xn--p1ai", "https://xn--h1agbg8e4a.xn--p1ai",
                                                "http://xn--h1agbg8e4a.xn--p1ai");
-    opt.WithExposedHeaders("count");
     opt.AllowAnyHeader();
     opt.AllowAnyMethod();
     opt.AllowCredentials();
@@ -69,11 +69,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
-app.UseCors();
+app.UseCors("default");
 
 app.UseAuthentication();
 app.UseAuthorization();

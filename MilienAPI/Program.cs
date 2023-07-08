@@ -39,7 +39,8 @@ builder.Services.AddAuthentication(options =>
             ValidAudience = audience,
             ValidateLifetime = true,
             IssuerSigningKey = signingKey,
-            ValidateIssuerSigningKey = true
+            ValidateIssuerSigningKey = true,
+            ClockSkew = TimeSpan.Zero
         };
     });
 
@@ -92,6 +93,7 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+FileUploader.FileUploaderConfigure(app.Services.GetRequiredService<IConfiguration>());
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

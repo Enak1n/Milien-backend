@@ -4,6 +4,7 @@ using Milien_backend.DataBase;
 using Milien_backend.Models.Enums;
 using Milien_backend.Models.Responses;
 using Milien_backend.Services.Interfaces;
+using System.Net;
 
 namespace Milien_backend.Controllers
 {
@@ -22,7 +23,7 @@ namespace Milien_backend.Controllers
 
         [HttpPost]
         [Route("refresh")]
-        public IActionResult Refresh(TokenApiModel tokenApiModel)
+        public async Task<IActionResult> Refresh(TokenApiModel tokenApiModel)
         {
             if (!ModelState.IsValid)
                 return BadRequest("Invalid client request");
@@ -45,7 +46,7 @@ namespace Milien_backend.Controllers
             var newRefreshToken = _tokenService.GenerateRefreshToken();
 
             currentIdentityUser.RefreshToken = newRefreshToken;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return Ok(new AuthenticateResponse()
             {

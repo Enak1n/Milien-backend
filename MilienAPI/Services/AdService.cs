@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using MilienAPI.DataBase;
+using MilienAPI.Helpers;
 using MilienAPI.Models;
+using MilienAPI.Models.Requests;
 using MilienAPI.Services.Interfaces;
 using MilienAPI.UnitOfWork.Interfaces;
 using System.Collections.Generic;
@@ -114,26 +116,5 @@ namespace MilienAPI.Services
             var paginatedData = ads.Skip((page - 1) * limit).Take(limit).ToList();
             return paginatedData;
         }
-
-        //public async Task<List<Ad>> GetFavoriteAds(int userId)
-        //{
-        //    var ads = await _context.Ads.Join(_context.Favorites,
-        //        ad => ad.Id,
-        //        favorite => favorite.AdId,
-        //        (ad, favorite) => new { Ad = ad, Favorite = favorite })
-        //        .Where(joinResult => joinResult.Favorite.CustomerId == userId)
-        //        .Select(joinResult => joinResult.Ad)
-        //        .ToListAsync();
-
-        //    return ads;
-        //}
-
-        //public async Task<bool> IsFavorite(int id, int userId)
-        //{
-        //    var ads = await _context.Favorites.Where(a => a.AdId == id &&
-        //    a.CustomerId == userId).FirstOrDefaultAsync();
-
-        //    return ads != null;
-        //}
     }
 }

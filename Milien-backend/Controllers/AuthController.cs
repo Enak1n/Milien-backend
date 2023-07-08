@@ -46,11 +46,11 @@ namespace Milien_backend.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ConfirmEmail(string cdoe, string email)
+        public async Task<IActionResult> ConfirmEmail(string code, string email)
         {
             try
             {
-                await _authService.ConfirmEmail(cdoe, email);
+                await _authService.ConfirmEmail(code, email);
                 return Ok("Почта подтверждена!");
             }
             catch (Exception ex)

@@ -8,13 +8,10 @@ namespace MilienAPI.Services
     public class FavoriteService : IFavoriteService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMemoryCache _cache;
 
-        public FavoriteService(IUnitOfWork unitOfWork, IMemoryCache memoryCache)
+        public FavoriteService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _cache = memoryCache;
-
         }
 
         public async Task<List<Ad>> GetFavoriteAds(int userId)

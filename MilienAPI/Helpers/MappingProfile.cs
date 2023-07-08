@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MilienAPI.Models;
+using MilienAPI.Models.Requests;
 using MilienAPI.Models.Responses;
 
 namespace MilienAPI.Helpers
@@ -9,6 +10,7 @@ namespace MilienAPI.Helpers
         public MappingProfile() 
         {
             CreateMap<Customer, AccountResponse>();
+            CreateMap<AdRequest, Ad>();
         }
     }
 }

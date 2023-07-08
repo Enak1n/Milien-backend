@@ -7,16 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["Milien-backend/Milien-backend.csproj", "Milien-backend/"]
-RUN dotnet restore "Milien-backend/Milien-backend.csproj"
+COPY ["Milien-backend/IdentityAPI.csproj", "Milien-backend/"]
+RUN dotnet restore "Milien-backend/IdentityAPI.csproj"
 COPY . .
 WORKDIR "/src/Milien-backend"
-RUN dotnet build "Milien-backend.csproj" -c Release -o /app/build
+RUN dotnet build "IdentityAPI.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Milien-backend.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "IdentityAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Milien-backend.dll"]
+ENTRYPOINT ["dotnet", "IdentityAPI.dll"]

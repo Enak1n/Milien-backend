@@ -5,7 +5,7 @@ VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityAPI", "Milien-backend\IdentityAPI.csproj", "{0717D6AF-EF1D-4C43-A91A-8642618C6785}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MilienAPI", "MilienAPI\MilienAPI.csproj", "{ABF8A985-4D05-4592-B856-E1814277BC8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MilienAPI", "MilienAPI\MilienAPI.csproj", "{ABF8A985-4D05-4592-B856-E1814277BC8D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

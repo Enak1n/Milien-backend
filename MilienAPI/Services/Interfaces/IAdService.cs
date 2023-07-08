@@ -1,4 +1,5 @@
 ﻿using MilienAPI.Models;
+using MilienAPI.Models.Requests;
 
 namespace MilienAPI.Services.Interfaces
 {
