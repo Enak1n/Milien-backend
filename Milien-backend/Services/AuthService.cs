@@ -117,7 +117,7 @@ namespace Milien_backend.Services
             {
                 userForCheck.ComfimedEmail = true;
                 userForCheck.ConfirmedCode = null;
-
+                
                 await _context.SaveChangesAsync();
             }
             else

@@ -222,5 +222,41 @@ namespace MilienAPI.Controllers
 
             return Ok();
         }
+
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> DeleteAd(int id)
+        {
+            try
+            {
+                await _adService.DeleteAd(id);
+                await _unitOfWork.Save();
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest("Что-то пошло не так!");
+            }
+        }
+
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> RemoveFromFavorite(int id)
+        {
+            var authorizedUser = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            try
+            {
+                await _favoriteService.RemoveFromFavorite(id, authorizedUser);
+
+                await _unitOfWork.Save();
+
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest("Что-то пошло не так!");
+            }
+        }
     }
 }

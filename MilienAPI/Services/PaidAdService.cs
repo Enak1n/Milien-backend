@@ -19,10 +19,9 @@ namespace MilienAPI.Services
         }
         public async Task<PaidAd> CreatePaidAd(string title, int userId)
         {
-            var ads = await _unitOfWork.Ads.Find(a => a.Title == title && a.CustomerId == userId);
-            var res = ads.OrderByDescending(a => a.Id).FirstOrDefault();
-            res.Premium = true;
-            PaidAd paidAd = new PaidAd(res.Id, DateTime.UtcNow.AddDays(10));
+            var ad = await _unitOfWork.Ads.Find(a => a.Title == title && a.CustomerId == userId);
+            ad.Premium = true;
+            PaidAd paidAd = new PaidAd(ad.Id, DateTime.UtcNow.AddDays(10));
             await _unitOfWork.PaidAd.Add(paidAd);
 
             return paidAd;

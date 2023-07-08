@@ -3,6 +3,7 @@ using Microsoft.Extensions.Caching.Memory;
 using MilienAPI.DataBase;
 using MilienAPI.Models;
 using MilienAPI.UnitOfWork.Interfaces;
+using System.Linq.Expressions;
 
 namespace MilienAPI.UnitOfWork
 {
@@ -33,7 +34,12 @@ namespace MilienAPI.UnitOfWork
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<T>> Find(System.Linq.Expressions.Expression<Func<T, bool>> predicate)
+        public async Task<T> Find(Expression<Func<T, bool>> predicate)
+        {
+            return await _context.Set<T>().Where(predicate).FirstOrDefaultAsync();
+        }
+
+        public async Task<List<T>> FindRange(Expression<Func<T, bool>> predicate)
         {
             return await _context.Set<T>().Where(predicate).ToListAsync();
         }

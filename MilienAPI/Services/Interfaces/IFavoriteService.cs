@@ -6,5 +6,6 @@ namespace MilienAPI.Services.Interfaces
     {
         Task<List<Ad>> GetFavoriteAds(int userId);
         Task<bool> IsFavorite(int id, int userId);
+        Task RemoveFromFavorite(int id, int userId);
     }
 }

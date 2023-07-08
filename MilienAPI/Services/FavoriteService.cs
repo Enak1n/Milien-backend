@@ -35,9 +35,18 @@ namespace MilienAPI.Services
             var isFavorite = await _unitOfWork.Favorites.Find(a => a.AdId == id &&
                                                 a.CustomerId == userId);
 
-            var favoriteAd = isFavorite.FirstOrDefault();
+            return isFavorite != null ? true : false;
+        }
 
-            return favoriteAd != null ? true : false;
+        public async Task RemoveFromFavorite(int id, int userId)
+        {
+            var ad = await _unitOfWork.Favorites.Find(a => a.AdId == id &&
+            a.CustomerId == userId);
+
+            if(ad != null)
+            {
+                await _unitOfWork.Favorites.Remove(ad);
+            }
         }
     }
 }

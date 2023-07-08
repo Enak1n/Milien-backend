@@ -23,6 +23,27 @@ namespace MilienAPI.Services
 
         }
 
+        public async Task DeleteAd(int id)
+        {
+            var ad = await _unitOfWork.Ads.GetById(id);
+
+            if(ad != null)
+            {
+                if(ad.PhotoPath != null)
+                {
+                    foreach (var item in ad.PhotoPath)
+                    {
+                                            
+                        int lastSlashIndex = item.LastIndexOf('/');
+                        string path = item.Substring(lastSlashIndex + 1);
+                        FileUploader.DeleteFileFromServer($"/var/images/{path}");
+                    }
+                }
+            }
+
+            await _unitOfWork.Ads.Remove(ad);
+        }
+
         public async Task EditAd(List<string> urls, int id, AdRequest adRequest)
         {
             List<string> uniqueFileNames = new List<string>();
@@ -58,13 +79,13 @@ namespace MilienAPI.Services
 
         public async Task<List<Ad>> GetAdsByCategory(string category)
         {
-            var ads = await _unitOfWork.Ads.Find(a => a.Category == category);
+            var ads = await _unitOfWork.Ads.FindRange(a => a.Category == category);
             return ads;
         }
 
         public async Task<List<Ad>> GetAdsByCustomerId(int id)
         {
-            var allAdsForCustomer = await _unitOfWork.Ads.Find(ad => ad.CustomerId == id);
+            var allAdsForCustomer = await _unitOfWork.Ads.FindRange(ad => ad.CustomerId == id);
 
             var res = allAdsForCustomer.OrderBy(a => a.Id).ToList();
 
@@ -107,7 +128,7 @@ namespace MilienAPI.Services
         {
             DateTime threeDaysAgo = DateTime.Today.AddDays(-3);
 
-            var ads = await _unitOfWork.Ads.Find(a => a.DateOfCreation >= threeDaysAgo);
+            var ads = await _unitOfWork.Ads.FindRange(a => a.DateOfCreation >= threeDaysAgo);
 
             var randomAds = ads.OrderBy(x => _random.Next()).Take(6).ToList();
 
@@ -116,7 +137,7 @@ namespace MilienAPI.Services
 
         public async Task<List<Ad>> GetNewServices()
         {
-            var ads = await _unitOfWork.Ads.Find(a => a.Category == "Услуги");
+            var ads = await _unitOfWork.Ads.FindRange(a => a.Category == "Услуги");
 
             var newServices = ads.OrderBy(a => _random.Next()).Take(6).ToList();
             return newServices;
@@ -138,7 +159,7 @@ namespace MilienAPI.Services
 
         public async Task<List<Ad>> SearchByQuery(string query, int page, int limit)
         {
-            var allAds = await _unitOfWork.Ads.Find(a => a.Title.ToLower().Contains(query.ToLower())
+            var allAds = await _unitOfWork.Ads.FindRange(a => a.Title.ToLower().Contains(query.ToLower())
                      || a.Category.ToLower().Contains(query.ToLower())
                      || a.Subcategory.ToLower().Contains(query.ToLower())
                      || a.Adress.ToLower().Contains(query.ToLower()));

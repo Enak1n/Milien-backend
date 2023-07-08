@@ -11,6 +11,7 @@ namespace MilienAPI.UnitOfWork.Interfaces
         Task Edit(T entity);
         Task Remove(T entity);
         Task RemoveRange(List<T> entities);
-        Task<List<T>> Find(Expression<Func<T, bool>> predicate);
+        Task<List<T>> FindRange(Expression<Func<T, bool>> predicate);
+        Task<T> Find(Expression<Func<T, bool>> predicate);
     }
 }
