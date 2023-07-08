@@ -109,9 +109,9 @@ namespace Milien_backend.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task ConfirmEmail(string code, string email)
+        public async Task ConfirmEmail(string code, string login)
         {
-            var userForCheck = await _context.Customers.FirstOrDefaultAsync(c => c.Email == email);
+            var userForCheck = await _context.Customers.FirstOrDefaultAsync(c => c.Login == login);
 
             if(userForCheck != null && userForCheck.ConfirmedCode == code)
             {
@@ -124,6 +124,15 @@ namespace Milien_backend.Services
             {
                 throw new Exception("Неверный код подтверждения!");
             }
+        }
+
+        public async Task SendEmail(string login)
+        {
+            var user = await _context.Customers.FirstOrDefaultAsync(c => c.Login == login);
+            var confirmedCode = EmailService.SendEmailAsync(user.Email, "Подтверждение регистрации", user);
+            user.ConfirmedCode = confirmedCode;
+
+            await _context.SaveChangesAsync();
         }
     }
 }

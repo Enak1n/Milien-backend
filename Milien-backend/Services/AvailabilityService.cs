@@ -13,6 +13,18 @@ namespace Milien_backend.Services
             _context = context;
         }
 
+        public async Task<bool> CheckAcceptEmail(string login)
+        {
+            var user = await _context.Customers.FirstOrDefaultAsync(x => x.Login == login);
+
+            if(user == null)
+            {
+                return false;
+            }
+
+            return user.ComfimedEmail;
+        }
+
         public async Task<bool> CheckCode(string code, string email)
         {
             var user = await _context.Customers.FirstOrDefaultAsync(x => x.Email == email);

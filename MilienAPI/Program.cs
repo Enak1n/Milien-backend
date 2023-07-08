@@ -58,6 +58,7 @@ builder.Services.AddCors(policy => policy.AddPolicy("default", opt =>
 builder.Services.AddScoped<IAdService, AdService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFavoriteService, FavoriteService>();
+builder.Services.AddScoped<IPaidAdService, PaidAdService>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddControllers();

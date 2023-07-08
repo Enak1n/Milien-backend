@@ -6,5 +6,6 @@
         Task<bool> CheckLogin(string login);
         Task<bool> CheckPhoneNumber(string phoneNumber);
         Task<bool> CheckEmail(string email);
+        Task<bool> CheckAcceptEmail(string login);
     }
 }

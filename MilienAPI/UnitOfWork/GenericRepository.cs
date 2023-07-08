@@ -27,18 +27,16 @@ namespace MilienAPI.UnitOfWork
             await _context.Set<T>().AddRangeAsync(entity);
         }
 
-
-        public Task<T> Edit(T entity)
+        public async Task Edit(T entity)
         {
-            throw new NotImplementedException();
+            _context.Update(entity);
+            await _context.SaveChangesAsync();
         }
-
 
         public async Task<List<T>> Find(System.Linq.Expressions.Expression<Func<T, bool>> predicate)
         {
             return await _context.Set<T>().Where(predicate).ToListAsync();
         }
-
 
         public async Task<List<T>> GetAll()
         {
@@ -52,18 +50,15 @@ namespace MilienAPI.UnitOfWork
             return entities;
         }
 
-
         public async Task<T> GetById(int id)
         {
             return await _context.Set<T>().FindAsync(id);
         }
 
-
         public async Task Remove(T entity)
         {
             await Task.Run(() => _context.Set<T>().Remove(entity));
         }
-
 
         public async Task RemoveRange(List<T> entities)
         {

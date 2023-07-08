@@ -8,7 +8,7 @@ namespace MilienAPI.UnitOfWork.Interfaces
         Task<T> GetById(int id);
         Task Add(T entity);
         Task AddRange(T entity);
-        Task<T> Edit(T entity);
+        Task Edit(T entity);
         Task Remove(T entity);
         Task RemoveRange(List<T> entities);
         Task<List<T>> Find(Expression<Func<T, bool>> predicate);

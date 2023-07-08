@@ -18,20 +18,22 @@ namespace MilienAPI.Controllers
     public class AdController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IAdService _adService; 
+        private readonly IAdService _adService;
         private readonly IFavoriteService _favoriteService;
+        private readonly IPaidAdService _paidAdService;
         private readonly IMapper _mapper;
 
-        public AdController(IUnitOfWork unitOfWork, IAdService adService, IFavoriteService service, IMapper mapper)
+        public AdController(IUnitOfWork unitOfWork, IAdService adService, IFavoriteService service, IMapper mapper, IPaidAdService paidAdService)
         {
-             _unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
             _adService = adService;
             _favoriteService = service;
             _mapper = mapper;
+            _paidAdService = paidAdService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Test() 
+        public async Task<IActionResult> Test()
         {
             var ads = await _unitOfWork.Ads.GetAll();
 
@@ -102,7 +104,7 @@ namespace MilienAPI.Controllers
 
             }
 
-            return Ok(new {Ads = adList, Categories = descriptionAttributes});
+            return Ok(new { Ads = adList, Categories = descriptionAttributes });
         }
 
         [HttpGet]
@@ -155,7 +157,7 @@ namespace MilienAPI.Controllers
         [Authorize]
         public async Task<IActionResult> CreateAd([FromForm] AdRequest ad)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             List<string> uniqueFileNames = new List<string>();
@@ -185,6 +187,38 @@ namespace MilienAPI.Controllers
 
             await _unitOfWork.Favorites.Add(favorite);
             await _unitOfWork.Save();
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> CreatePaidAd([FromForm] AdRequest adRequest)
+        {
+            var authorizedUser = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var res = await _paidAdService.CreatePaidAd(adRequest.Title, authorizedUser);
+            await _unitOfWork.Save();
+            return Ok(res);
+
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> UpgradeToPremium([FromBody] int id)
+        {
+            await _paidAdService.UpgradeToPremium(id);
+
+            await _unitOfWork.Save();
+
+            return Ok();
+        }
+
+        [HttpPut]
+        [Authorize]
+        public async Task<IActionResult> EditAd([FromForm] List<string> urls, [FromForm] AdRequest adRequest)
+        {
+            await _adService.EditAd(urls, adRequest.Id, adRequest);
 
             return Ok();
         }

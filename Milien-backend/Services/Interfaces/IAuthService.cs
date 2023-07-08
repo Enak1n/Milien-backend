@@ -12,5 +12,6 @@ namespace Milien_backend.Services.Interfaces
         Task ResetPassword(string email);
         Task CreateNewPassword(string password, string email);
         Task ConfirmEmail(string code, string email);
+        Task SendEmail(string login);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Milien_backend.Models.Requsets;
 using Milien_backend.Services.Interfaces;
+using Milien_backend.DataBase;
 
 namespace Milien_backend.Controllers
 {
@@ -10,11 +11,26 @@ namespace Milien_backend.Controllers
     {
         private readonly IAuthService _authService;
         private readonly IAvailabilityService _availabilityService;
+        private readonly Context _context;
 
-        public AuthController(IAuthService authService, IAvailabilityService availabilityService)
+        public AuthController(IAuthService authService, IAvailabilityService availabilityService, Context context)
         {
             _authService = authService;
             _availabilityService = availabilityService;
+            _context = context;
+        }
+
+        [HttpGet]
+        [Route("check_accept_email")]
+        public async Task<IActionResult> CheckAcceptEmail(string login)
+        {
+            var user = _context.Customers.Where(u => u.Login == login).FirstOrDefault();
+            if (user == null)
+            {
+                return NotFound("Неверный логин или пароль!");
+            }
+
+            return Ok(await _availabilityService.CheckAcceptEmail(login));
         }
 
         [HttpGet]
@@ -46,11 +62,11 @@ namespace Milien_backend.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ConfirmEmail(string code, string email)
+        public async Task<IActionResult> ConfirmEmail(string code, string login)
         {
             try
             {
-                await _authService.ConfirmEmail(code, email);
+                await _authService.ConfirmEmail(code, login);
                 return Ok("Почта подтверждена!");
             }
             catch (Exception ex)
@@ -59,6 +75,7 @@ namespace Milien_backend.Controllers
             }
 
         }
+
         [HttpPost, Route("login")]
         public async Task<IActionResult> Login(LoginRequest loginRequest)
         {
@@ -113,6 +130,21 @@ namespace Milien_backend.Controllers
         {
             await _authService.CreateNewPassword(password, email);
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("send_email")]
+        public async Task<IActionResult> SendEmail(string login)
+        {
+            try
+            {
+                await _authService.SendEmail(login);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest("Ошибка при отправке письма!");
+            }
         }
     }
 }

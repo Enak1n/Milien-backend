@@ -23,6 +23,39 @@ namespace MilienAPI.Services
 
         }
 
+        public async Task EditAd(List<string> urls, int id, AdRequest adRequest)
+        {
+            List<string> uniqueFileNames = new List<string>();
+            var currentAd = await _unitOfWork.Ads.GetById(id);
+
+            if (currentAd != null)
+            {
+                foreach(var item in urls)
+                {
+                    if (!currentAd.PhotoPath.Contains(item))
+                    {
+                        int lastSlashIndex = item.LastIndexOf('/');
+                        string path = item.Substring(lastSlashIndex + 1);
+                        FileUploader.DeleteFileFromServer($"/var/images/{path}");
+                    }
+                }
+            }
+
+            if (adRequest.Images != null)
+                uniqueFileNames = FileUploader.UploadImageToServer(adRequest.Images, "/var/images");
+
+            uniqueFileNames.InsertRange(0, urls);
+            currentAd.Title = adRequest.Title;
+            currentAd.Description = adRequest.Description;
+            currentAd.Price = adRequest.Price;
+            currentAd.Adress = adRequest.Adress;
+            currentAd.Category = adRequest.Category;
+            currentAd.Subcategory = adRequest.Subcategory;
+            currentAd.PhotoPath = uniqueFileNames.ToArray();
+
+            await _unitOfWork.Save();
+        }
+
         public async Task<List<Ad>> GetAdsByCategory(string category)
         {
             var ads = await _unitOfWork.Ads.Find(a => a.Category == category);
