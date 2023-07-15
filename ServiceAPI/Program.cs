@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Milien_backend.DataBase;
-using Milien_backend.Helpers;
-using Milien_backend.Services;
-using Milien_backend.Services.Interfaces;
+using Microsoft.OpenApi.Models;
+using ServiceAPI.Data;
+using ServiceAPI.Services.Interfaces;
+using ServiceAPI.UnitOfWork;
+using ServiceAPI.UnitOfWork.Interfaces;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,16 +14,13 @@ var builder = WebApplication.CreateBuilder(args);
 var databaseConnection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<Context>(option => option.UseNpgsql(databaseConnection));
 
-builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IAvailabilityService, AvailabilityService>();
-
 var secretKey = builder.Configuration.GetSection("JwtSettings:SecretKey").Value;
 var issuer = builder.Configuration.GetSection("JwtSettings:Issuer").Value;
 var audience = builder.Configuration.GetSection("JwtSettings:Audience").Value;
 
 var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 
+builder.Services.AddMemoryCache();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -50,23 +47,44 @@ builder.Services.AddCors(policy => policy.AddPolicy("default", opt =>
     opt.WithOrigins("localhost:3000", "https://localhost:3000", "http://localhost:3000",
                     "xn--h1agbg8e4a.xn--p1ai", "https://xn--h1agbg8e4a.xn--p1ai",
                                                "http://xn--h1agbg8e4a.xn--p1ai");
+    opt.WithExposedHeaders("count");
     opt.AllowAnyHeader();
     opt.AllowAnyMethod();
-    opt.AllowCredentials();
 }));
 
-builder.Services.Configure<CookiePolicyOptions>(options =>
-{
-    // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-    options.CheckConsentNeeded = context => true;
-    options.MinimumSameSitePolicy = SameSiteMode.None;
-});
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 
-builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = @"Enter access token",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+          new OpenApiSecurityScheme
+          {
+            Reference = new OpenApiReference
+            {
+                Type = ReferenceType.SecurityScheme,
+                Id = "Bearer"
+            },
+          },
+          new List<string>()
+        }
+    });
+});
 
 var app = builder.Build();
 
@@ -77,12 +95,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
 app.UseCors("default");
-app.UseCookiePolicy();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -90,3 +107,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

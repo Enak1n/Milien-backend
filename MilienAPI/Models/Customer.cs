@@ -11,5 +11,6 @@
         public string PhoneNumber { get; set; }
         public Role Role { get; set; }
         public string? AboutMe { get; set; }
+        public string? Avatar { get; set; }
     }
 }

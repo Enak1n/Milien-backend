@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityAPI", "Milien-backe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MilienAPI", "MilienAPI\MilienAPI.csproj", "{ABF8A985-4D05-4592-B856-E1814277BC8D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceAPI", "ServiceAPI\ServiceAPI.csproj", "{8FE2B3FD-33D1-435D-9323-0B909E8F7A99}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{ABF8A985-4D05-4592-B856-E1814277BC8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABF8A985-4D05-4592-B856-E1814277BC8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABF8A985-4D05-4592-B856-E1814277BC8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FE2B3FD-33D1-435D-9323-0B909E8F7A99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FE2B3FD-33D1-435D-9323-0B909E8F7A99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FE2B3FD-33D1-435D-9323-0B909E8F7A99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FE2B3FD-33D1-435D-9323-0B909E8F7A99}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

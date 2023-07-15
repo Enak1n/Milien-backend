@@ -1,4 +1,5 @@
 ﻿using MilienAPI.Models;
+using MilienAPI.Models.Requests;
 using MilienAPI.Models.Responses;
 
 namespace MilienAPI.Services.Interfaces
@@ -7,6 +8,6 @@ namespace MilienAPI.Services.Interfaces
     {
         Task<Customer> GetCustomerById(int id);
         Task<(Customer, List<Ad>)> GetOwnAds(int userId);
-        Task EditProfile(int userId, AccountResponse accountResponse);
+        Task EditProfile(int userId, AccountRequest accountResponse);
     }
 }

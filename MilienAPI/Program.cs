@@ -52,7 +52,6 @@ builder.Services.AddCors(policy => policy.AddPolicy("default", opt =>
     opt.WithExposedHeaders("count");
     opt.AllowAnyHeader();
     opt.AllowAnyMethod();
-    opt.AllowCredentials();
 }));
 
 builder.Services.AddScoped<IAdService, AdService>();
@@ -106,7 +105,7 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
-app.UseCors();
+app.UseCors("default");
 
 app.UseAuthentication();
 app.UseAuthorization();

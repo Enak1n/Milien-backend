@@ -8,6 +8,7 @@ using MilienAPI.Services.Interfaces;
 using MilienAPI.UnitOfWork;
 using MilienAPI.UnitOfWork.Interfaces;
 using System.ComponentModel;
+using System.Net;
 using System.Reflection;
 using System.Security.Claims;
 
@@ -63,8 +64,10 @@ namespace MilienAPI.Controllers
         public async Task<IActionResult> GetAdById(int id)
         {
             var ad = await _unitOfWork.Ads.GetById(id);
-            return ad == null ? NotFound() : Ok(ad);
+
+            return Ok(ad);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> GetAdsByCategory(string category)
@@ -119,6 +122,19 @@ namespace MilienAPI.Controllers
             return Ok(paginatedData);
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> Filtration(int limit, int page, string category = null, string subcategory = null,
+            int min = 0, int max = int.MaxValue)
+        {
+            var allAds = await _unitOfWork.Ads.GetAll();
+            var ads = await _adService.Filtration(limit, page, category, subcategory,
+            min, max);
+
+            Response.Headers.Add("count", $"{allAds.Count}");
+            return Ok(ads);
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetNewAds()
         {
@@ -135,7 +151,7 @@ namespace MilienAPI.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetFavoritesAds()
+        public async Task<IActionResult> GetFavoriteAds()
         {
             var authorizedUser = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
@@ -146,7 +162,7 @@ namespace MilienAPI.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<bool> IsFavorite(int id)
+        public async Task<bool> IsFavoite(int id)
         {
             var authorizedUser = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
 

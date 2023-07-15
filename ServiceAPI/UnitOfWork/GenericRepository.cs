@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using MilienAPI.DataBase;
-using MilienAPI.Models;
-using MilienAPI.UnitOfWork.Interfaces;
+using ServiceAPI.Data;
+using ServiceAPI.Models;
+using ServiceAPI.UnitOfWork.Interfaces;
 using System.Linq.Expressions;
 
-namespace MilienAPI.UnitOfWork
+namespace ServiceAPI.UnitOfWork
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {

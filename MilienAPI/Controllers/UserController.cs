@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MilienAPI.Exceptions;
 using MilienAPI.Models;
+using MilienAPI.Models.Requests;
 using MilienAPI.Models.Responses;
 using MilienAPI.Services.Interfaces;
 using MilienAPI.UnitOfWork.Interfaces;
@@ -53,7 +54,7 @@ namespace MilienAPI.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<IActionResult> EditProfile(AccountResponse accountResponse)
+        public async Task<IActionResult> EditProfile([FromForm]AccountRequest accountResponse)
         {
             var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
 

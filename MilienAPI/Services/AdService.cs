@@ -32,8 +32,7 @@ namespace MilienAPI.Services
                 if(ad.PhotoPath != null)
                 {
                     foreach (var item in ad.PhotoPath)
-                    {
-                                            
+                    {                                        
                         int lastSlashIndex = item.LastIndexOf('/');
                         string path = item.Substring(lastSlashIndex + 1);
                         FileUploader.DeleteFileFromServer($"/var/images/{path}");
@@ -77,6 +76,20 @@ namespace MilienAPI.Services
             await _unitOfWork.Save();
         }
 
+        public async Task<List<Ad>> Filtration(int limit, int page, string category = null, string subcategory = null, int min = 0, int max = int.MaxValue)
+        {
+            var adsQuery = await _unitOfWork.Ads.FindRange(a =>
+                    (category == null || a.Category.ToLower() == category.ToLower())
+                    && (subcategory == null || a.Subcategory.ToLower() == subcategory.ToLower())
+                    && a.Price >= min && a.Price <= max);
+
+            var ads = adsQuery.OrderByDescending(x => x.Id);
+
+            var res = ads.Skip((page - 1) * limit).Take(limit).ToList();
+
+            return res;
+        }
+
         public async Task<List<Ad>> GetAdsByCategory(string category)
         {
             var ads = await _unitOfWork.Ads.FindRange(a => a.Category == category);
@@ -96,6 +109,7 @@ namespace MilienAPI.Services
         {
             if (refreshAds || !_cache.TryGetValue("cacheAds", out List<Ad> cachedAds))
             {
+                _cache.Remove("cacheAds");
                 var allAds = await _unitOfWork.Ads.GetAll();
                 cachedAds = allAds.OrderBy(a => _random.Next()).ToList();
                 var premiumAds = cachedAds.Where(a => a.Premium).ToList();
@@ -137,7 +151,8 @@ namespace MilienAPI.Services
 
         public async Task<List<Ad>> GetNewServices()
         {
-            var ads = await _unitOfWork.Ads.FindRange(a => a.Category == "Услуги");
+            DateTime fiveDaysAgo = DateTime.Today.AddDays(-5);
+            var ads = await _unitOfWork.Ads.FindRange(a => a.Category == "Услуги" && a.DateOfCreation >= fiveDaysAgo);
 
             var newServices = ads.OrderBy(a => _random.Next()).Take(6).ToList();
             return newServices;
