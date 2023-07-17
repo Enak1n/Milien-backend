@@ -13,5 +13,6 @@ namespace ServiceAPI.Data
         }
 
         public DbSet<PaidAd> PaidAds { get; set; }
+        public DbSet<Subscription> Subscriptions { get; set; }
     }
 }

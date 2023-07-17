@@ -117,9 +117,9 @@ namespace MilienAPI.Controllers
 
             var paginatedData = await _adService.SearchByQuery(query, page, limit);
 
-            Response.Headers.Add("count", $"{allAds.Count}");
+            Response.Headers.Add("count", $"{paginatedData.Item2}");
 
-            return Ok(paginatedData);
+            return Ok(paginatedData.Item1);
         }
 
 

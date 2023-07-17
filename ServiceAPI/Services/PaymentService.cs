@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
+using ServiceAPI.Services.Interfaces;
 using Yandex.Checkout.V3;
 
-namespace ServiceAPI.Services.Interfaces
+namespace ServiceAPI.Services
 {
     public class PaymentService : IPaymentService
     {
@@ -50,7 +51,7 @@ namespace ServiceAPI.Services.Interfaces
 
             Payment payment = client.CreatePayment(newPayment);
             string paymentUrl = payment.Confirmation.ConfirmationUrl;
-            return (new { PaymentUrl = paymentUrl, PaymentId = payment.Id });
+            return new { PaymentUrl = paymentUrl, PaymentId = payment.Id };
         }
     }
 }

@@ -13,13 +13,16 @@ namespace ServiceAPI.UnitOfWork
         {
              _context = context;
             PaidAds = new PaidAdRepository(context, memoryCache);
+            Subscriptions = new SubscriptionRepository(context, memoryCache);
         }
 
         public IPaidAdRepository PaidAds { get; private set; }
+        public ISubscriptionRepository Subscriptions { get; private set; }
 
-        public UnitOfWork(IPaidAdRepository paidAds)
+        public UnitOfWork(IPaidAdRepository paidAds, ISubscriptionRepository subscriptions)
         {
             PaidAds = paidAds;
+            Subscriptions = subscriptions;
         }
 
         public async Task Save()

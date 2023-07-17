@@ -172,7 +172,7 @@ namespace MilienAPI.Services
             return adList;
         }
 
-        public async Task<List<Ad>> SearchByQuery(string query, int page, int limit)
+        public async Task<(List<Ad>, int)> SearchByQuery(string query, int page, int limit)
         {
             var allAds = await _unitOfWork.Ads.FindRange(a => a.Title.ToLower().Contains(query.ToLower())
                      || a.Category.ToLower().Contains(query.ToLower())
@@ -183,7 +183,7 @@ namespace MilienAPI.Services
                 .ThenByDescending(x => x.Id).ToList();
 
             var paginatedData = ads.Skip((page - 1) * limit).Take(limit).ToList();
-            return paginatedData;
+            return (paginatedData, ads.Count);
         }
     }
 }

@@ -82,13 +82,11 @@ namespace Milien_backend.Controllers
             try
             {
                 var res = await _authService.Login(loginRequest);
-                
-                HttpContext.Response.Cookies.Append("myCookie", res.RefreshToken, new CookieOptions
+
+                Response.Cookies.Append("itrjgnprg", res.RefreshToken, new CookieOptions
                 {
-                    Path = "/",
-                    HttpOnly = false,
-                    IsEssential = true, //<- there
-                    Expires = DateTime.UtcNow.AddDays(7)
+                    Expires = DateTime.UtcNow.AddDays(7),
+                    HttpOnly = true
                 });
                 return Ok(res);
             }
