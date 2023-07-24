@@ -14,6 +14,13 @@ namespace MilienAPI.Services
             _unitOfWork = unitOfWork;
         }
 
+        public async Task<int> GetCountOfFavorite(int adId)
+        {
+            var ads = await _unitOfWork.Favorites.FindRange(a => a.AdId == adId);
+
+            return ads.Count;
+        }
+
         public async Task<List<Ad>> GetFavoriteAds(int userId)
         {
             var ads = await _unitOfWork.Ads.GetAll();

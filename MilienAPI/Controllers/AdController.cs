@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using MilienAPI.Helpers;
 using MilienAPI.Models;
 using MilienAPI.Models.Requests;
 using MilienAPI.Services.Interfaces;
 using MilienAPI.UnitOfWork;
 using MilienAPI.UnitOfWork.Interfaces;
+using System;
 using System.ComponentModel;
 using System.Net;
 using System.Reflection;
@@ -33,12 +35,12 @@ namespace MilienAPI.Controllers
             _paidAdService = paidAdService;
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> Test()
         {
-            var ads = await _unitOfWork.Ads.GetAll();
+            var u2serId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            return Ok(ads);
+            return Ok();
         }
 
         [HttpGet("{customerId}")]
@@ -158,6 +160,13 @@ namespace MilienAPI.Controllers
             var ads = await _favoriteService.GetFavoriteAds(authorizedUser);
 
             return Ok(ads);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<int> GetCountOfFavorite(int adId)
+        {
+            return await _favoriteService.GetCountOfFavorite(adId);
         }
 
         [HttpGet]

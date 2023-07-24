@@ -48,7 +48,6 @@ builder.Services.AddCors(policy => policy.AddPolicy("default", opt =>
     opt.WithOrigins("localhost:3000", "https://localhost:3000", "http://localhost:3000",
                     "xn--h1agbg8e4a.xn--p1ai", "https://xn--h1agbg8e4a.xn--p1ai",
                                                "http://xn--h1agbg8e4a.xn--p1ai");
-    opt.WithExposedHeaders("count");
     opt.AllowAnyHeader();
     opt.AllowAnyMethod();
 }));

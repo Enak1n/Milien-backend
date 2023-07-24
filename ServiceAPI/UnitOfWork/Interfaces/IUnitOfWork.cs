@@ -6,6 +6,7 @@ namespace ServiceAPI.UnitOfWork.Interfaces
     {
         IPaidAdRepository PaidAds { get; }
         ISubscriptionRepository Subscriptions { get; }
+        ICustomerRepository Customers { get; }
 
         Task Save();
     }

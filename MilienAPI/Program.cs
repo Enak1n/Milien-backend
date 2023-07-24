@@ -9,6 +9,8 @@ using MilienAPI.Services.Interfaces;
 using MilienAPI.Services;
 using Microsoft.OpenApi.Models;
 using MilienAPI.Helpers;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using Microsoft.AspNetCore.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +44,21 @@ builder.Services.AddAuthentication(options =>
             ValidateIssuerSigningKey = true,
             ClockSkew = TimeSpan.Zero
         };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["token"];
+
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/notificationHub")))
+                {
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddCors(policy => policy.AddPolicy("default", opt =>
@@ -52,19 +69,24 @@ builder.Services.AddCors(policy => policy.AddPolicy("default", opt =>
     opt.WithExposedHeaders("count");
     opt.AllowAnyHeader();
     opt.AllowAnyMethod();
+    opt.AllowCredentials();
 }));
+
 
 builder.Services.AddScoped<IAdService, AdService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFavoriteService, FavoriteService>();
 builder.Services.AddScoped<IPaidAdService, PaidAdService>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
+    options.AddSignalRSwaggerGen();
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = @"Enter access token",
@@ -91,6 +113,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.AddSignalR();
 var app = builder.Build();
 
 FileUploader.FileUploaderConfigure(app.Services.GetRequiredService<IConfiguration>());
@@ -113,3 +136,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
