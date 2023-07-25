@@ -8,6 +8,5 @@ namespace MilienAPI.Models
     {
         public int FollowerId { get; set; }
         public int FollowingId { get; set; }
-        public List<string> Notifications { get; set; } = new();
     }
 }

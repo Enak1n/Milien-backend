@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using ServiceAPI.Data;
 using ServiceAPI.Models;
-using MilienAPI.UnitOfWork.Interfaces;
+using ServiceAPI.UnitOfWork.Interfaces;
 
 namespace ServiceAPI.UnitOfWork
 {

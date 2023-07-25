@@ -19,5 +19,6 @@ namespace MilienAPI.DataBase
         public DbSet<Customer> Customers { get; set; }
         public DbSet<PaidAd> PaidAds { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using MilienAPI.UnitOfWork.Interfaces;
+﻿using ServiceAPI.UnitOfWork.Interfaces;
 
 namespace ServiceAPI.UnitOfWork.Interfaces
 {
@@ -7,6 +7,7 @@ namespace ServiceAPI.UnitOfWork.Interfaces
         IPaidAdRepository PaidAds { get; }
         ISubscriptionRepository Subscriptions { get; }
         ICustomerRepository Customers { get; }
+        INotificationRepository Notifications { get; }
 
         Task Save();
     }

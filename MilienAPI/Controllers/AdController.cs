@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using MilienAPI.DataBase;
 using MilienAPI.Helpers;
 using MilienAPI.Models;
 using MilienAPI.Models.Requests;
@@ -39,6 +41,8 @@ namespace MilienAPI.Controllers
         public async Task<IActionResult> Test()
         {
             var u2serId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            await NotificationSender.SendNotification($"Пользователь  выложил новое объявление - !", Convert.ToInt32(u2serId), _unitOfWork);
 
             return Ok();
         }
@@ -146,8 +150,9 @@ namespace MilienAPI.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetNewServices()
-        {
+       {
             var newServices = await _adService.GetNewServices();
+
             return Ok(newServices);
         }
 
@@ -182,6 +187,9 @@ namespace MilienAPI.Controllers
         [Authorize]
         public async Task<IActionResult> CreateAd([FromForm] AdRequest ad)
         {
+            var authorizedUser = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = await _unitOfWork.Customers.Find(s => s.Id == authorizedUser);
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -198,6 +206,8 @@ namespace MilienAPI.Controllers
             await _unitOfWork.Ads.Add(createdAd);
 
             await _unitOfWork.Save();
+
+            await NotificationSender.SendNotification($"Пользователь, на которого вы подписаны, выложил новое объявление - {createdAd.Title}!", authorizedUser, _unitOfWork);
 
             return Ok(createdAd);
         }

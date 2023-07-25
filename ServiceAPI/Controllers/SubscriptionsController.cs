@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ServiceAPI.Helpers;
+using ServiceAPI.Models;
+using ServiceAPI.Models.Responses;
 using ServiceAPI.Services.Interfaces;
 using ServiceAPI.UnitOfWork.Interfaces;
 using System.Security.Claims;
@@ -12,22 +16,25 @@ namespace ServiceAPI.Controllers
     {
         private readonly ISubscriptionService _subscriptionService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public SubscriptionsController(ISubscriptionService subscriptionService, IUnitOfWork unitOfWork)
+        public SubscriptionsController(ISubscriptionService subscriptionService, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _subscriptionService = subscriptionService;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Subscribe([FromBody]int followingId)
+        public async Task<IActionResult> Subscribe([FromBody] int followingId)
         {
             var authorizedUser = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
             try
             {
                 await _subscriptionService.Subscribe(authorizedUser, followingId);
-
+                var user = await _unitOfWork.Customers.Find(u => u.Id == authorizedUser);
+                await NotificationSender.SendNotificationForIndividualUser($"Пользователь {user.Login}, подписался на ваши обновления!", followingId, authorizedUser, _unitOfWork);
                 return Ok();
             }
             catch
@@ -50,7 +57,7 @@ namespace ServiceAPI.Controllers
 
                 return Ok();
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -95,6 +102,39 @@ namespace ServiceAPI.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetNotifications()
+        {
+            var ownerId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var res = await _subscriptionService.GetNotifications(141);
+            List<NotificationResponse> notificationResponses = new(); 
+
+            foreach (var notification in res)
+            {
+                var user = await _unitOfWork.Customers.Find(u => u.Id == notification.CustomerId);
+                var notifications = _mapper.Map<Notification, NotificationResponse>(notification);
+                notifications.Customer = user;
+                notificationResponses.Add(notifications);
+            }
+
+            return Ok(notificationResponses);
+        }
+
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> RemoveNotifications()
+        {
+            var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            await _subscriptionService.RemoveFromNotification(userId);
+
+            await _unitOfWork.Save();
+
+            return Ok();
         }
     }
 }

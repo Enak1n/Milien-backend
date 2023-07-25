@@ -15,9 +15,9 @@ namespace ServiceAPI.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<List<Customer>> GetMySubscriptions(int userId)
+        public async Task<List<Customer>> GetMySubscriptions(int ownerId)
         {
-            var subscribes = await _unitOfWork.Subscriptions.FindRange(s => s.FollowerId == userId);
+            var subscribes = await _unitOfWork.Subscriptions.FindRange(s => s.FollowerId == ownerId);
             var subscribesId = subscribes.Select(a => a.FollowingId).ToList();
 
             var customersWithFollowingIds = await _unitOfWork.Customers
@@ -26,11 +26,27 @@ namespace ServiceAPI.Services
             return customersWithFollowingIds;
         }
 
+        public async Task<List<Notification>> GetNotifications(int ownerId)
+        {
+            var res = await _unitOfWork.Notifications.FindRange(s => s.CustomerId == ownerId);
+
+            var notifications = res.OrderByDescending(s => s.DateOfCreation).ToList(); 
+
+            return notifications;
+        }
+
         public async Task<bool> IsSubscribe(int userId, int followingId)
         {
             var subscription = await _unitOfWork.Subscriptions.Find(s => s.FollowerId == userId && s.FollowingId == followingId);
 
             return subscription != null;
+        }
+
+        public async Task RemoveFromNotification(int userId)
+        {
+            var notifications = await _unitOfWork.Notifications.FindRange(n => n.OwnerId == userId);
+
+            await _unitOfWork.Notifications.RemoveRange(notifications);
         }
 
         public async Task Subscribe(int followerId, int followingId)
