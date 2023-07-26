@@ -110,7 +110,7 @@ namespace ServiceAPI.Controllers
         {
             var ownerId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            var res = await _subscriptionService.GetNotifications(141);
+            var res = await _subscriptionService.GetNotifications(ownerId);
             List<NotificationResponse> notificationResponses = new(); 
 
             foreach (var notification in res)

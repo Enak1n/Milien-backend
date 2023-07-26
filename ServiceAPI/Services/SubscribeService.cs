@@ -26,7 +26,7 @@ namespace ServiceAPI.Services
 
         public async Task<List<Notification>> GetNotifications(int ownerId)
         {
-            var res = await _unitOfWork.Notifications.FindRange(s => s.CustomerId == ownerId);
+            var res = await _unitOfWork.Notifications.FindRange(s => s.OwnerId == ownerId);
 
             var notifications = res.OrderByDescending(s => s.DateOfCreation).ToList(); 
 
