@@ -10,6 +10,8 @@
         public string LastName { get; set; }
         public string PhoneNumber { get; set; }
         public Role Role { get; set; }
+        public bool ComfimedEmail { get; set; }
+        public string? ConfirmedCode { get; set; }
         public string? AboutMe { get; set; }
         public string? Avatar { get; set; }
     }

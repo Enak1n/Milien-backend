@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Milien_backend.DataBase;
-using Milien_backend.Models;
+using Millien.Domain.DataBase;
+using Millien.Domain.Entities;
 using Milien_backend.Models.Requsets;
 using Milien_backend.Models.Responses;
 using Milien_backend.Services.Interfaces;
@@ -26,7 +26,7 @@ namespace Milien_backend.Services
 
         public async Task<AuthenticateResponse> Login(LoginRequest loginRequest)
         {
-            var user = await _context.Customers.FirstOrDefaultAsync(c => c.Login == loginRequest.Login);
+            Customer user = await _context.Customers.FirstOrDefaultAsync(c => c.Login == loginRequest.Login);
             var userFromLogin = await _context.Login.FirstOrDefaultAsync(u => u.Login == loginRequest.Login);
             if (user == null)
             {
@@ -65,13 +65,13 @@ namespace Milien_backend.Services
             string pass = _passwordHasher.HashPassword(null, userRequest.Pass);
             userRequest.Pass = pass;
 
-            LoginDTO login = new LoginDTO
+            LoginModel login = new LoginModel
             {
                 Login = userRequest.Login,
                 Password = userRequest.Pass
             };
 
-            var createdUser = _mapper.Map<UserRequest, UserDTO>(userRequest);
+            var createdUser = _mapper.Map<UserRequest, Customer>(userRequest);
             var confirmedCode = EmailService.SendEmailAsync(createdUser.Email, "Подтверждение регистрации", createdUser);
             createdUser.ConfirmedCode = confirmedCode;
             createdUser.Role = Role.User;

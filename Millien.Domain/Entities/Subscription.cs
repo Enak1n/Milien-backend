@@ -7,5 +7,11 @@ namespace Millien.Domain.Entities
     {
         public int FollowerId { get; set; }
         public int FollowingId { get; set; }
+
+        public Subscription(int followerId, int followingId)
+        {
+            FollowerId = followerId;
+            FollowingId = followingId;
+        }
     }
 }

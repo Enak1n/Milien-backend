@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using MilienAPI.DataBase;
+using Millien.Domain.DataBase;
 using MilienAPI.Helpers;
-using MilienAPI.Models;
+using Millien.Domain.Entities;
 using MilienAPI.Models.Requests;
 using MilienAPI.Services.Interfaces;
-using MilienAPI.UnitOfWork.Interfaces;
+using Millien.Domain.UnitOfWork.Interfaces;
 using System.Collections.Generic;
 
 namespace MilienAPI.Services

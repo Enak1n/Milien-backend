@@ -2,12 +2,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using ServiceAPI.Data;
+using Millien.Domain.DataBase;
 using ServiceAPI.Helpers;
 using ServiceAPI.Services;
 using ServiceAPI.Services.Interfaces;
-using ServiceAPI.UnitOfWork;
-using ServiceAPI.UnitOfWork.Interfaces;
+using Millien.Domain.UnitOfWork;
+using Millien.Domain.UnitOfWork.Interfaces;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);

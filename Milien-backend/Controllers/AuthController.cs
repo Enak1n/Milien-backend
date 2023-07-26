@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Milien_backend.Models.Requsets;
 using Milien_backend.Services.Interfaces;
-using Milien_backend.DataBase;
+using Millien.Domain.DataBase;
 
 namespace Milien_backend.Controllers
 {

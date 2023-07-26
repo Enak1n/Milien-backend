@@ -1,7 +1,6 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using MilienAPI.Models;
+﻿using Millien.Domain.Entities;
 using MilienAPI.Services.Interfaces;
-using MilienAPI.UnitOfWork.Interfaces;
+using Millien.Domain.UnitOfWork.Interfaces;
 
 namespace MilienAPI.Services
 {

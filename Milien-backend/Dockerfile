@@ -8,6 +8,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["Milien-backend/IdentityAPI.csproj", "Milien-backend/"]
+COPY ["Millien.Domain/Millien.Domain.csproj", "Millien.Domain/"] 
 RUN dotnet restore "Milien-backend/IdentityAPI.csproj"
 COPY . .
 WORKDIR "/src/Milien-backend"

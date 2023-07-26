@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Milien_backend.DataBase;
+using Millien.Domain.DataBase;
 using Milien_backend.Helpers;
 using Milien_backend.Services;
 using Milien_backend.Services.Interfaces;

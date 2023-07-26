@@ -1,15 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using MilienAPI.DataBase;
 using MilienAPI.Helpers;
-using MilienAPI.Models;
 using MilienAPI.Models.Requests;
 using MilienAPI.Services.Interfaces;
-using MilienAPI.UnitOfWork;
-using MilienAPI.UnitOfWork.Interfaces;
+using Millien.Domain.Entities;
+using Millien.Domain.UnitOfWork.Interfaces;
 using System;
 using System.ComponentModel;
 using System.Net;

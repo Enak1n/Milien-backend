@@ -21,4 +21,8 @@
     <PackageReference Include="Yandex.Checkout.V3" Version="1.7.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Millien.Domain\Millien.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

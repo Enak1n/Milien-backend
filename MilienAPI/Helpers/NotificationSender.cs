@@ -1,6 +1,5 @@
-﻿using MilienAPI.DataBase;
-using MilienAPI.Models;
-using MilienAPI.UnitOfWork.Interfaces;
+﻿using Millien.Domain.UnitOfWork.Interfaces;
+using Millien.Domain.Entities;
 
 namespace MilienAPI.Helpers
 {

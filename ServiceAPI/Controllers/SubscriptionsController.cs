@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceAPI.Helpers;
-using ServiceAPI.Models;
+using Millien.Domain.Entities;
 using ServiceAPI.Models.Responses;
 using ServiceAPI.Services.Interfaces;
-using ServiceAPI.UnitOfWork.Interfaces;
+using Millien.Domain.UnitOfWork.Interfaces;
 using System.Security.Claims;
 
 namespace ServiceAPI.Controllers

@@ -8,6 +8,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["MilienAPI/MilienAPI.csproj", "MilienAPI/"]
+COPY ["Millien.Domain/Millien.Domain.csproj", "Millien.Domain/"] 
 RUN dotnet restore "MilienAPI/MilienAPI.csproj"
 COPY . .
 WORKDIR "/src/MilienAPI"

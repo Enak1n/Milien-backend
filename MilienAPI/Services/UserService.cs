@@ -1,10 +1,9 @@
 ﻿using MilienAPI.Exceptions;
 using MilienAPI.Helpers;
-using MilienAPI.Models;
+using Millien.Domain.Entities;
 using MilienAPI.Models.Requests;
-using MilienAPI.Models.Responses;
 using MilienAPI.Services.Interfaces;
-using MilienAPI.UnitOfWork.Interfaces;
+using Millien.Domain.UnitOfWork.Interfaces;
 
 namespace MilienAPI.Services
 {

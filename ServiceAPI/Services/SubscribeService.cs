@@ -1,8 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ServiceAPI.Data;
-using ServiceAPI.Models;
+﻿using Millien.Domain.Entities;
 using ServiceAPI.Services.Interfaces;
-using ServiceAPI.UnitOfWork.Interfaces;
+using Millien.Domain.UnitOfWork.Interfaces;
 
 namespace ServiceAPI.Services
 {

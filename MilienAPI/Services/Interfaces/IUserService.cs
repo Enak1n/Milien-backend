@@ -1,6 +1,5 @@
-﻿using MilienAPI.Models;
+﻿using Millien.Domain.Entities;
 using MilienAPI.Models.Requests;
-using MilienAPI.Models.Responses;
 
 namespace MilienAPI.Services.Interfaces
 {

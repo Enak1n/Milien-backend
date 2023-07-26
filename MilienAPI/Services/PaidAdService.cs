@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
-using MilienAPI.Models;
-using MilienAPI.Models.Requests;
+using Millien.Domain.Entities;
 using MilienAPI.Services.Interfaces;
-using MilienAPI.UnitOfWork.Interfaces;
+
+using Millien.Domain.UnitOfWork.Interfaces;
 
 namespace MilienAPI.Services
 {
@@ -22,7 +22,7 @@ namespace MilienAPI.Services
             var ad = await _unitOfWork.Ads.Find(a => a.Title == title && a.CustomerId == userId);
             ad.Premium = true;
             PaidAd paidAd = new PaidAd(ad.Id, DateTime.UtcNow.AddDays(10));
-            await _unitOfWork.PaidAd.Add(paidAd);
+            await _unitOfWork.PaidAds.Add(paidAd);
 
             return paidAd;
         }
@@ -32,7 +32,7 @@ namespace MilienAPI.Services
             var res = await _unitOfWork.Ads.GetById(id);
             res.Premium = true;
             PaidAd paidAd = new PaidAd(res.Id, DateTime.UtcNow.AddDays(10));
-            await _unitOfWork.PaidAd.Add(paidAd);
+            await _unitOfWork.PaidAds.Add(paidAd);
         }
     }
 }

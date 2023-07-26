@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Milien_backend.Models;
+using Millien.Domain.Entities;
 using Milien_backend.Models.Requsets;
 
 namespace Milien_backend.Helpers
@@ -8,7 +8,7 @@ namespace Milien_backend.Helpers
     {
         public MappingProfile() 
         {
-            CreateMap<UserRequest, UserDTO>();
+            CreateMap<UserRequest, Customer>();
         }
     }
 }

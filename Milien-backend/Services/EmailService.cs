@@ -1,12 +1,12 @@
 ﻿using System.Net.Mail;
 using System.Net;
-using Milien_backend.Models;
+using Millien.Domain.Entities;
 
 namespace Milien_backend.Services
 {
     public static class EmailService
     {
-        public static string SendEmailAsync(string email, string subject, UserDTO user)
+        public static string SendEmailAsync(string email, string subject, Customer user)
         {
             Guid uniqueCode = Guid.NewGuid();
             string formattedGuid = uniqueCode.ToString("N").Substring(0, 6);

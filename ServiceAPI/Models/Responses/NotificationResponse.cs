@@ -1,4 +1,6 @@
-﻿namespace ServiceAPI.Models.Responses
+﻿using Millien.Domain.Entities;
+
+namespace ServiceAPI.Models.Responses
 {
     public class NotificationResponse
     {

@@ -1,4 +1,4 @@
-﻿using MilienAPI.Models;
+﻿using Millien.Domain.Entities;
 using MilienAPI.Models.Requests;
 
 namespace MilienAPI.Services.Interfaces

@@ -2,15 +2,13 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using MilienAPI.DataBase;
-using MilienAPI.UnitOfWork.Interfaces;
-using MilienAPI.UnitOfWork;
+using Millien.Domain.DataBase;
+using Millien.Domain.UnitOfWork.Interfaces;
+using Millien.Domain.UnitOfWork;
 using MilienAPI.Services.Interfaces;
 using MilienAPI.Services;
 using Microsoft.OpenApi.Models;
 using MilienAPI.Helpers;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using Microsoft.AspNetCore.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 

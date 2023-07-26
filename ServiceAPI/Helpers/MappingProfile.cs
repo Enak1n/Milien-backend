@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ServiceAPI.Models;
+using Millien.Domain.Entities;
 using ServiceAPI.Models.Responses;
 
 namespace ServiceAPI.Helpers

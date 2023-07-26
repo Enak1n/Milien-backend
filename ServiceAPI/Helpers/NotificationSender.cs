@@ -1,6 +1,6 @@
-﻿using ServiceAPI.Data;
-using ServiceAPI.Models;
-using ServiceAPI.UnitOfWork.Interfaces;
+﻿using Millien.Domain.DataBase;
+using Millien.Domain.Entities;
+using Millien.Domain.UnitOfWork.Interfaces;
 
 namespace ServiceAPI.Helpers
 {

@@ -2,11 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MilienAPI.Exceptions;
-using MilienAPI.Models;
+using Millien.Domain.Entities;
 using MilienAPI.Models.Requests;
 using MilienAPI.Models.Responses;
 using MilienAPI.Services.Interfaces;
-using MilienAPI.UnitOfWork.Interfaces;
+using Millien.Domain.UnitOfWork.Interfaces;
 using System.Security.Claims;
 
 namespace MilienAPI.Controllers
