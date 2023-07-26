@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MilienAPI", "MilienAPI\Mili
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceAPI", "ServiceAPI\ServiceAPI.csproj", "{8FE2B3FD-33D1-435D-9323-0B909E8F7A99}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Millien.Domain", "Millien.Domain\Millien.Domain.csproj", "{83A56F5A-E2DA-4D3F-ADF3-B6E6F5E4C888}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{8FE2B3FD-33D1-435D-9323-0B909E8F7A99}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FE2B3FD-33D1-435D-9323-0B909E8F7A99}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FE2B3FD-33D1-435D-9323-0B909E8F7A99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83A56F5A-E2DA-4D3F-ADF3-B6E6F5E4C888}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83A56F5A-E2DA-4D3F-ADF3-B6E6F5E4C888}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83A56F5A-E2DA-4D3F-ADF3-B6E6F5E4C888}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83A56F5A-E2DA-4D3F-ADF3-B6E6F5E4C888}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

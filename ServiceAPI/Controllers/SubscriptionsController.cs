@@ -34,7 +34,7 @@ namespace ServiceAPI.Controllers
             {
                 await _subscriptionService.Subscribe(authorizedUser, followingId);
                 var user = await _unitOfWork.Customers.Find(u => u.Id == authorizedUser);
-                await NotificationSender.SendNotificationForIndividualUser($"Пользователь {user.Login}, подписался на ваши обновления!", followingId, authorizedUser, _unitOfWork);
+                await NotificationSender.SendNotificationForIndividualUser($"Пользователь подписался на ваши обновления!", followingId, authorizedUser, _unitOfWork);
                 return Ok();
             }
             catch

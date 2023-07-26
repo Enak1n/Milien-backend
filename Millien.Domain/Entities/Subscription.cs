@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace MilienAPI.Models
+namespace Millien.Domain.Entities
 {
     [PrimaryKey("FollowerId", "FollowingId")]
     public class Subscription
