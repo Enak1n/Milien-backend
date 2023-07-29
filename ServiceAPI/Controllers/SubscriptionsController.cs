@@ -7,6 +7,7 @@ using ServiceAPI.Models.Responses;
 using ServiceAPI.Services.Interfaces;
 using Millien.Domain.UnitOfWork.Interfaces;
 using System.Security.Claims;
+using Microsoft.AspNetCore.SignalR;
 
 namespace ServiceAPI.Controllers
 {
@@ -17,12 +18,15 @@ namespace ServiceAPI.Controllers
         private readonly ISubscriptionService _subscriptionService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IHubContext<UserStatusHub> _hubContext;
 
-        public SubscriptionsController(ISubscriptionService subscriptionService, IUnitOfWork unitOfWork, IMapper mapper)
+        public SubscriptionsController(ISubscriptionService subscriptionService, IUnitOfWork unitOfWork, IMapper mapper,
+            IHubContext<UserStatusHub> hubContext)
         {
             _subscriptionService = subscriptionService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _hubContext = hubContext;
         }
 
         [HttpPost]
@@ -134,6 +138,12 @@ namespace ServiceAPI.Controllers
 
             await _unitOfWork.Save();
 
+            return Ok();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Test(int id)
+        {
             return Ok();
         }
     }

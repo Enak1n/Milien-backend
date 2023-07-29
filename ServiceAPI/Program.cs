@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Millien.Domain.DataBase;
@@ -42,6 +43,23 @@ builder.Services.AddAuthentication(options =>
             ValidateIssuerSigningKey = true,
             ClockSkew = TimeSpan.Zero
         };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["token"];
+
+                // если запрос направлен хабу
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/status"))
+                {
+                    // получаем токен из строки запроса
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddCors(policy => policy.AddPolicy("default", opt =>
@@ -51,6 +69,7 @@ builder.Services.AddCors(policy => policy.AddPolicy("default", opt =>
                                                "http://xn--h1agbg8e4a.xn--p1ai");
     opt.AllowAnyHeader();
     opt.AllowAnyMethod();
+    opt.AllowCredentials();
 }));
 
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
@@ -87,6 +106,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var app = builder.Build();
@@ -109,5 +129,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.MapHub<UserStatusHub>("/status");
 app.Run();
 
