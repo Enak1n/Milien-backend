@@ -140,11 +140,5 @@ namespace ServiceAPI.Controllers
 
             return Ok();
         }
-
-        [HttpGet]
-        public async Task<IActionResult> Test(int id)
-        {
-            return Ok();
-        }
     }
 }
