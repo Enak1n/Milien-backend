@@ -17,6 +17,7 @@ namespace Millien.Domain.UnitOfWork
             PaidAds = new PaidAdRepository(context, memoryCache);
             Subscriptions = new SubscriptionRepository(context, memoryCache);
             Notifications = new NotificationRepository(context, memoryCache);
+            Messages = new MessageRepository(context, memoryCache);
         }
         public IAddRepository Ads { get; private set; }
         public IFavoriteRepository Favorites { get; private set; }
@@ -24,9 +25,10 @@ namespace Millien.Domain.UnitOfWork
         public IPaidAdRepository PaidAds { get; private set; }
         public ISubscriptionRepository Subscriptions { get; private set; }
         public INotificationRepository Notifications { get; private set; }
+        public IMessageRepository Messages { get; private set; }
 
         public UnitOfWork(IAddRepository addRepository, IFavoriteRepository favorites, ICustomerRepository customers, IPaidAdRepository paidAds,
-            ISubscriptionRepository subscriptions, INotificationRepository notification)
+            ISubscriptionRepository subscriptions, INotificationRepository notification, IMessageRepository messageRepository)
         {
             Ads = addRepository;
             Favorites = favorites;
@@ -34,6 +36,7 @@ namespace Millien.Domain.UnitOfWork
             PaidAds = paidAds;
             Subscriptions = subscriptions;
             Notifications = notification;
+            Messages = messageRepository;
         }
 
         public async Task Save()

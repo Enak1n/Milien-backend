@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 
-namespace ServiceAPI.Helpers
+namespace ServiceAPI.Hubs
 {
     [Authorize]
     public class UserStatusHub : Hub

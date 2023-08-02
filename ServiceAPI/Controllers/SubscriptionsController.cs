@@ -8,6 +8,7 @@ using ServiceAPI.Services.Interfaces;
 using Millien.Domain.UnitOfWork.Interfaces;
 using System.Security.Claims;
 using Microsoft.AspNetCore.SignalR;
+using ServiceAPI.Hubs;
 
 namespace ServiceAPI.Controllers
 {

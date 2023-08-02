@@ -2,6 +2,7 @@
 using Milien_backend.Models.Requsets;
 using Milien_backend.Services.Interfaces;
 using Millien.Domain.DataBase;
+using System.Xml.Linq;
 
 namespace Milien_backend.Controllers
 {
@@ -83,11 +84,13 @@ namespace Milien_backend.Controllers
             {
                 var res = await _authService.Login(loginRequest);
 
-                Response.Cookies.Append("itrjgnprg", res.RefreshToken, new CookieOptions
+                var options = new CookieOptions
                 {
-                    Expires = DateTime.UtcNow.AddDays(7),
-                    HttpOnly = true
-                });
+                    Expires = DateTime.Now.AddDays(7),
+                    IsEssential = true
+                };
+
+                Response.Cookies.Append("Name", res.RefreshToken, options);
                 return Ok(res);
             }
             catch (Exception ex)

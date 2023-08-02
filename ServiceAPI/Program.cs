@@ -10,6 +10,7 @@ using ServiceAPI.Services.Interfaces;
 using Millien.Domain.UnitOfWork;
 using Millien.Domain.UnitOfWork.Interfaces;
 using System.Text;
+using ServiceAPI.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,6 +61,23 @@ builder.Services.AddAuthentication(options =>
                 return Task.CompletedTask;
             }
         };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["token"];
+
+                // если запрос направлен хабу
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/chat"))
+                {
+                    // получаем токен из строки запроса
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddCors(policy => policy.AddPolicy("default", opt =>
@@ -74,6 +92,7 @@ builder.Services.AddCors(policy => policy.AddPolicy("default", opt =>
 
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<ISubscriptionService, SubscribeService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -130,5 +149,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapHub<UserStatusHub>("/status");
+app.MapHub<ChatHub>("/chat");
 app.Run();
 

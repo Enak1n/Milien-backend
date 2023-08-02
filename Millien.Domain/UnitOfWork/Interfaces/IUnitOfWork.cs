@@ -10,6 +10,7 @@ namespace Millien.Domain.UnitOfWork.Interfaces
         ISubscriptionRepository Subscriptions { get; }
         ICustomerRepository Customers { get; }
         INotificationRepository Notifications { get; }
+        IMessageRepository Messages { get; }
 
         Task Save();
     }

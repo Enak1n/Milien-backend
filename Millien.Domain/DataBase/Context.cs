@@ -21,5 +21,6 @@ namespace Millien.Domain.DataBase
             public DbSet<Subscription> Subscriptions { get; set; }
             public DbSet<Notification> Notifications { get; set; }
             public DbSet<LoginModel> Login { get; set; }
+            public DbSet<Message> Messages { get; set; }
         }
 }
