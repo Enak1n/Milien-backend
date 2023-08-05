@@ -49,7 +49,7 @@ builder.Services.AddAuthentication(options =>
         {
             OnMessageReceived = context =>
             {
-                var accessToken = context.Request.Query["token"];
+                var accessToken = context.Request.Query["access_token"];
 
                 // если запрос направлен хабу
                 var path = context.HttpContext.Request.Path;
@@ -66,7 +66,7 @@ builder.Services.AddAuthentication(options =>
         {
             OnMessageReceived = context =>
             {
-                var accessToken = context.Request.Query["token"];
+                var accessToken = context.Request.Query["access_token"];
 
                 // если запрос направлен хабу
                 var path = context.HttpContext.Request.Path;

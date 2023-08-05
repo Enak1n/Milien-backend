@@ -15,18 +15,25 @@ namespace ServiceAPI.Services
 
         public async Task<List<Customer>> GetAllCorresponences(int id)
         {
-            var customersFromData = await _unitOfWork.Messages.FindRange(c => c.SenderId == id);
+            var customersFromData = await _unitOfWork.Messages.FindRange(c => c.SenderId == id || c.RecipientId == id);
 
             var res = customersFromData.OrderByDescending(m => m.Id).Select(x => new { x.SenderId, x.RecipientId })
                                                                     .Distinct()
                                                                     .ToList();
 
-            List<Customer> result = new List<Customer>();
 
+            List<Customer> result = new List<Customer>();
+            Customer recipient;
             foreach (var customer in res)
             {
-                var recipient = await _unitOfWork.Customers.Find(x => x.Id == customer.RecipientId);
-                result.Add(recipient);
+                if (customer.RecipientId != id) // Проверка, чтобы исключить получателя с переданным id
+                {
+                    recipient = await _unitOfWork.Customers.Find(x => x.Id == customer.RecipientId);
+                    result.Add(recipient);
+                    continue;
+                }
+                recipient = await _unitOfWork.Customers.Find(x => x.Id == customer.SenderId);
+                result.Add(recipient); 
             }
 
             return result;
@@ -37,7 +44,7 @@ namespace ServiceAPI.Services
             var chat = await _unitOfWork.Messages.FindRange(m => (m.SenderId == senderId && m.RecipientId == recipientId) ||
             (m.SenderId == recipientId && m.RecipientId == senderId));
 
-            return chat.OrderByDescending(c => c.Id).ToList();
+            return chat.OrderByDescending(c => c.DateOfDispatch).ToList();
         }
     }
 }
