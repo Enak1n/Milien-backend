@@ -7,6 +7,7 @@ using MilienAPI.Models.Requests;
 using MilienAPI.Services.Interfaces;
 using Millien.Domain.UnitOfWork.Interfaces;
 using System.Collections.Generic;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace MilienAPI.Services
 {
@@ -76,10 +77,12 @@ namespace MilienAPI.Services
             await _unitOfWork.Save();
         }
 
-        public async Task<List<Ad>> Filtration(int limit, int page, string category = null, string subcategory = null, int min = 0, int max = int.MaxValue)
+        public async Task<List<Ad>> Filtration(int limit, int page, string category = null, string subcategory = null,
+            string town = null, int min = 0, int max = int.MaxValue)
         {
             var adsQuery = await _unitOfWork.Ads.FindRange(a =>
                     (category == null || a.Category.ToLower() == category.ToLower())
+                    &&(town == null || a.Adress.ToLower().Contains(town.ToLower()))
                     && (subcategory == null || a.Subcategory.ToLower() == subcategory.ToLower())
                     && a.Price >= min && a.Price <= max);
 

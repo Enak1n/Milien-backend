@@ -6,7 +6,7 @@
         public string Message { get; set; }
         public int CustomerId { get; set; }
         public int OwnerId { get; set; }
-        public DateTime DateOfCreation { get; set; } = DateTime.Now;
+        public DateTime DateOfCreation { get; set; } = DateTime.UtcNow;
 
         public Notification(string message, int customerId, int ownerId)
         {

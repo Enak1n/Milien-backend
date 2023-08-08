@@ -23,25 +23,13 @@ namespace ServiceAPI.Hubs
             string receiver = httpContext.Request.Query["userid"];
             string sender = Context.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            Groups.AddToGroupAsync(Context.ConnectionId, sender);
             if (!string.IsNullOrEmpty(receiver))
             {
-                Groups.AddToGroupAsync(Context.ConnectionId, receiver);
+                Groups.AddToGroupAsync(Context.ConnectionId, receiver + sender);
+                Groups.AddToGroupAsync(Context.ConnectionId, sender + receiver);
             }
 
             return base.OnConnectedAsync();
-        }
-
-        public async Task SendMessage(string user, string message, int id)
-        {
-            await Clients.All.SendAsync("ReceiveMessage", user, message);
-
-            var senderId = Convert.ToInt32(Context.User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-            Message messageEntity = new Message(senderId, Convert.ToInt32(id), message);
-
-            await _unitOfWork.Messages.Add(messageEntity);
-            await _unitOfWork.Save();
         }
 
         public async Task SendMessageToGroup(string receiver, string message)
@@ -52,7 +40,7 @@ namespace ServiceAPI.Hubs
 
             await _unitOfWork.Messages.Add(messageEntity);
             await _unitOfWork.Save();
-            await Clients.Group(receiver).SendAsync("ReceiveMessage", messageEntity);
+            await Clients.Group(senderId + receiver).SendAsync("ReceiveMessage", messageEntity);
         }
     }
 }

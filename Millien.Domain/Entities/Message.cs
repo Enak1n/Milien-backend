@@ -6,7 +6,8 @@
         public int SenderId { get; set; }
         public int RecipientId { get; set; }
         public string Text { get; set; }
-        public DateTime DateOfDispatch { get; set; } = DateTime.Now;
+        public DateTime DateOfDispatch { get; set; } = DateTime.UtcNow;
+        public bool IsRead { get; set; } = false;
 
         public Message(int senderId, int recpientId, string meessage)
         {

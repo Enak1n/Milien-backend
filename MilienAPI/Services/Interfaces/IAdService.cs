@@ -13,7 +13,7 @@ namespace MilienAPI.Services.Interfaces
         Task<List<Ad>> Search(string query);
         Task<(List<Ad>, int)> SearchByQuery(string query, int page, int limit);
         Task<List<Ad>> Filtration(int limit, int page, string category = null, string subcategory = null,
-            int min = 0, int max = int.MaxValue);
+            string town = null, int min = 0, int max = int.MaxValue);
         Task EditAd(List<string> urls, int id, AdRequest adRequest);
         Task DeleteAd(int id);
     }

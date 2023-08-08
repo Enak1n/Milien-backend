@@ -8,6 +8,12 @@ namespace ServiceAPI.Hubs
     public class UserStatusHub : Hub
     {
         private static Dictionary<string, int> onlineUsers = new Dictionary<string, int>();
+        private readonly ILogger<UserStatusHub> _logger;
+
+        public UserStatusHub(ILogger<UserStatusHub> logger)
+        {
+            _logger = logger;
+        }
 
         public override async Task OnConnectedAsync()
         {
@@ -22,6 +28,8 @@ namespace ServiceAPI.Hubs
                 }
 
                 onlineUsers[connectionId] = id;
+
+                _logger.LogInformation($"User {id} connected.");
                 await Clients.All.SendAsync("UserStatusChanged", id, true);
             }
         }
@@ -34,14 +42,14 @@ namespace ServiceAPI.Hubs
                 onlineUsers.Remove(connectionId);
                 await Clients.All.SendAsync("UserStatusChanged", connectionId, false);
             }
+            _logger.LogInformation($"User {connectionId} disconnected.");
             await base.OnDisconnectedAsync(exception);
         }
 
         public bool IsUserOnline(int id)
         {
-            if (onlineUsers.ContainsValue(id))
-                return true;
-            return false;
+            _logger.LogInformation($"User {id} is {onlineUsers.ContainsValue(id)}");
+            return onlineUsers.ContainsValue(id);
         }
 
         private string GetConnectionId() => Context.ConnectionId;

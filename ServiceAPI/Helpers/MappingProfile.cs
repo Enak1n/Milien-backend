@@ -10,6 +10,8 @@ namespace ServiceAPI.Helpers
         {
             CreateMap<Notification, NotificationResponse>();
             CreateMap<NotificationResponse, Notification>();
+            CreateMap<Message, MessageReponse>();
+            CreateMap<MessageReponse, Message>();
         }
     }
 }

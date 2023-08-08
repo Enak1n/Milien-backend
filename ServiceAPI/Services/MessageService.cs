@@ -1,5 +1,7 @@
-﻿using Millien.Domain.Entities;
+﻿using AutoMapper;
+using Millien.Domain.Entities;
 using Millien.Domain.UnitOfWork.Interfaces;
+using ServiceAPI.Models.Responses;
 using ServiceAPI.Services.Interfaces;
 
 namespace ServiceAPI.Services
@@ -7,34 +9,56 @@ namespace ServiceAPI.Services
     public class MessageService : IMessageService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public MessageService(IUnitOfWork unitOfWork)
+        public MessageService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        public async Task<List<Customer>> GetAllCorresponences(int id)
+        public async Task<int> CountOfUnreadingMessages(int userId)
         {
-            var customersFromData = await _unitOfWork.Messages.FindRange(c => c.SenderId == id || c.RecipientId == id);
+            var messages = await _unitOfWork.Messages.FindRange(m => (m.SenderId == userId || m.RecipientId == userId) && m.IsRead == false);
 
-            var res = customersFromData.OrderByDescending(m => m.Id).Select(x => new { x.SenderId, x.RecipientId })
-                                                                    .Distinct()
-                                                                    .ToList();
+            return messages.Count();
+        }
 
+        public async Task<List<MessageReponse>> FindCorrespondence(string query, int id)
+        {
+            var messages = await _unitOfWork.Messages.FindRange(x => x.Text.ToLower().Contains(query.ToLower()) &&
+                                                                      (x.SenderId == id || x.RecipientId == id));
 
-            List<Customer> result = new List<Customer>();
-            Customer recipient;
-            foreach (var customer in res)
+            List<MessageReponse> result = new List<MessageReponse>();
+
+            foreach (var message in messages)
             {
-                if (customer.RecipientId != id) // Проверка, чтобы исключить получателя с переданным id
-                {
-                    recipient = await _unitOfWork.Customers.Find(x => x.Id == customer.RecipientId);
-                    result.Add(recipient);
-                    continue;
-                }
-                recipient = await _unitOfWork.Customers.Find(x => x.Id == customer.SenderId);
-                result.Add(recipient); 
+                var correspondent = await _unitOfWork.Customers.Find(x => x.Id == message.SenderId);
+
+                result.Add(new MessageReponse(correspondent, message.Text, message.DateOfDispatch.ToLocalTime(), message.IsRead));
             }
+
+            return result;
+        }
+
+        public async Task<List<MessageReponse>> GetAllCorresponences(int id)
+        {
+            var messages = await _unitOfWork.Messages.FindRange(c => c.SenderId == id || c.RecipientId == id);
+            var userIds = messages.SelectMany(m => new[] { m.SenderId, m.RecipientId }).Distinct().Where(uid => uid != id);
+
+            List<MessageReponse> result = new List<MessageReponse>();
+
+            foreach (var userId in userIds)
+            {
+                var correspondent = await _unitOfWork.Customers.Find(x => x.Id == userId);
+                var lastMessage = messages.Where(m => (m.SenderId == id && m.RecipientId == userId) || (m.SenderId == userId && m.RecipientId == id)).OrderByDescending(m => m.Id).FirstOrDefault();
+
+                if (lastMessage != null)
+                {
+                    result.Add(new MessageReponse(correspondent, lastMessage.Text, lastMessage.DateOfDispatch.ToLocalTime(), lastMessage.IsRead));
+                }
+            }
+            result = result.OrderByDescending(r => r.DateOfDispatch).ToList();
 
             return result;
         }
@@ -44,7 +68,16 @@ namespace ServiceAPI.Services
             var chat = await _unitOfWork.Messages.FindRange(m => (m.SenderId == senderId && m.RecipientId == recipientId) ||
             (m.SenderId == recipientId && m.RecipientId == senderId));
 
-            return chat.OrderByDescending(c => c.DateOfDispatch).ToList();
+            foreach (var message in chat)
+            {
+                message.DateOfDispatch = message.DateOfDispatch.ToLocalTime();
+                if (!message.IsRead)
+                    message.IsRead = true;
+            }
+
+            chat = chat.OrderByDescending(c => c.Id).ToList();
+            await _unitOfWork.Save();
+            return chat;
         }
     }
 }
