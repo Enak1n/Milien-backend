@@ -19,7 +19,7 @@ namespace ServiceAPI.Services
 
         public async Task<int> CountOfUnreadingMessages(int userId)
         {
-            var messages = await _unitOfWork.Messages.FindRange(m => (m.SenderId == userId || m.RecipientId == userId) && m.IsRead == false);
+            var messages = await _unitOfWork.Messages.FindRange(m => m.RecipientId == userId && m.IsRead == false);
 
             return messages.Count();
         }
@@ -55,7 +55,10 @@ namespace ServiceAPI.Services
 
                 if (lastMessage != null)
                 {
-                    result.Add(new MessageReponse(correspondent, lastMessage.Text, lastMessage.DateOfDispatch.ToLocalTime(), lastMessage.IsRead));
+                    if (lastMessage.RecipientId == id)
+                        result.Add(new MessageReponse(correspondent, lastMessage.Text, lastMessage.DateOfDispatch.ToLocalTime(), lastMessage.IsRead));
+                    else
+                        result.Add(new MessageReponse(correspondent, lastMessage.Text, lastMessage.DateOfDispatch.ToLocalTime(), true));
                 }
             }
             result = result.OrderByDescending(r => r.DateOfDispatch).ToList();
@@ -71,7 +74,7 @@ namespace ServiceAPI.Services
             foreach (var message in chat)
             {
                 message.DateOfDispatch = message.DateOfDispatch.ToLocalTime();
-                if (!message.IsRead)
+                if (!message.IsRead && message.RecipientId == senderId)
                     message.IsRead = true;
             }
 
