@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using Millien.Domain.Entities;
 using Millien.Domain.UnitOfWork.Interfaces;
+using ServiceAPI.Models.Responses;
 using System.Security.Claims;
 
 namespace ServiceAPI.Hubs
@@ -35,12 +36,14 @@ namespace ServiceAPI.Hubs
         public async Task SendMessageToGroup(string receiver, string message)
         {
             var senderId = Convert.ToInt32(Context.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = await _unitOfWork.Customers.Find(x => x.Id == senderId);
 
             Message messageEntity = new Message(senderId, Convert.ToInt32(receiver), message);
+            MessageReponse messageResponse = new MessageReponse(user, messageEntity.Text, messageEntity.DateOfDispatch.ToLocalTime(), false);
 
             await _unitOfWork.Messages.Add(messageEntity);
             await _unitOfWork.Save();
-            await Clients.Group(senderId + receiver).SendAsync("ReceiveMessage", messageEntity);
+            await Clients.Group(senderId + receiver).SendAsync("ReceiveMessage", messageEntity, messageResponse);
         }
     }
 }

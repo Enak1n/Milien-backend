@@ -80,7 +80,6 @@ namespace ServiceAPI.Controllers
         {
             var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-
             try
             {
                 var res = await _messageService.CountOfUnreadingMessages(userId);
