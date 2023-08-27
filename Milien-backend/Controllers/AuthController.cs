@@ -1,7 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using Milien_backend.Models.Requsets;
 using Milien_backend.Services.Interfaces;
 using Millien.Domain.DataBase;
+using Org.BouncyCastle.Asn1.Cmp;
+using Org.BouncyCastle.Asn1.Crmf;
+using RestSharp;
+using System.Net;
 using System.Xml.Linq;
 
 namespace Milien_backend.Controllers
@@ -50,9 +55,57 @@ namespace Milien_backend.Controllers
 
         [HttpGet]
         [Route("check_phone")]
-        public async Task<bool> CheckPhone(string phoneNumber)
+        public async Task<IActionResult> CheckPhone(string phoneNumber)
         {
-            return await _availabilityService.CheckPhoneNumber(phoneNumber);
+            if (await _availabilityService.CheckPhoneNumber(phoneNumber))
+            {
+                var options = new RestClientOptions("https://lite-mobileid.beeline.ru")
+                {
+                    MaxTimeout = -1,
+                };
+                var client = new RestClient(options);
+                var request = new RestRequest("/lite-auth", Method.Post);
+                request.AddHeader("Content-Type", "application/json");
+                request.AddHeader("Authorization", "Basic TWlsbGlvbl9MaXRlQXBpOkZaaEhXRDQ0dk9kTzNuVVM=");
+                var body = @"{
+                            " + "\n" +
+                                @"    ""response_type"": ""polling"",
+                            " + "\n" +
+                                            $@"    ""msisdn"": ""{phoneNumber}""
+                            " + "\n" +
+                @"}";
+                request.AddStringBody(body, DataFormat.Json);
+                RestResponse response = await client.ExecuteAsync(request);
+
+                return Ok(response.Content);
+            }
+            else
+            {
+                return BadRequest("Аккаунт с таким номером уже зарегистрирован!");
+            }
+        }
+
+        [HttpGet]
+        [Route("check_authMobilePhone")]
+        public async Task<IActionResult> CheckAuthMobilePhone(string requestId)
+        {
+            var options = new RestClientOptions("https://lite-mobileid.beeline.ru")
+            {
+                MaxTimeout = -1,
+            };
+            var client = new RestClient(options);
+            var request = new RestRequest("/lite-result", Method.Post);
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("Authorization", "Basic TWlsbGlvbl9MaXRlQXBpOkZaaEhXRDQ0dk9kTzNuVVM=");
+            var body = @"{
+                            " + "\n" +
+                                        $@"    ""request_id"": ""{requestId}""
+                            " + "\n" +
+            @"}";
+            request.AddStringBody(body, DataFormat.Json);
+            RestResponse response = await client.ExecuteAsync(request);
+
+            return Ok(response.Content);
         }
 
         [HttpGet]
@@ -84,13 +137,12 @@ namespace Milien_backend.Controllers
             {
                 var res = await _authService.Login(loginRequest);
 
-                var options = new CookieOptions
+                CookieOptions cookiie = new CookieOptions
                 {
-                    Expires = DateTime.Now.AddDays(7),
-                    IsEssential = true
+                    Expires = DateTime.Now.AddDays(7)
                 };
 
-                Response.Cookies.Append("Name", res.RefreshToken, options);
+                Response.Cookies.Append("userInfo", res.RefreshToken, cookiie);
                 return Ok(res);
             }
             catch (Exception ex)

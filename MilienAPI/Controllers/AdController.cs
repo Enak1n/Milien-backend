@@ -6,9 +6,8 @@ using MilienAPI.Models.Requests;
 using MilienAPI.Services.Interfaces;
 using Millien.Domain.Entities;
 using Millien.Domain.UnitOfWork.Interfaces;
-using System;
+using RestSharp;
 using System.ComponentModel;
-using System.Net;
 using System.Reflection;
 using System.Security.Claims;
 
@@ -36,10 +35,6 @@ namespace MilienAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Test()
         {
-            var u2serId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            await NotificationSender.SendNotification($"Пользователь  выложил новое объявление - !", Convert.ToInt32(u2serId), _unitOfWork);
-
             return Ok();
         }
 

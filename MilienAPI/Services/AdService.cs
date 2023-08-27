@@ -8,6 +8,7 @@ using MilienAPI.Services.Interfaces;
 using Millien.Domain.UnitOfWork.Interfaces;
 using System.Collections.Generic;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.Text;
 
 namespace MilienAPI.Services
 {
@@ -161,28 +162,42 @@ namespace MilienAPI.Services
             return newServices;
         }
 
+        private static string NormalizeQuery(string query)
+        {
+            var normalizedQuery = new StringBuilder(query);
+
+            // Replace Е with Ё
+            normalizedQuery.Replace('Е', 'Ё').Replace('е', 'ё');
+            
+            return normalizedQuery.ToString();
+        }
+
         public async Task<List<Ad>> Search(string query)
         {
+            var normalizedQuery = NormalizeQuery(query);
+
             var allAds = await _unitOfWork.Ads.GetAll();
 
             var adList = allAds
-                .Where(a => a.Title.ToLower().Contains(query.ToLower())
-                || a.Adress.ToLower().Contains(query.ToLower()))
+                .Where(a => a.Title.ToLower().Contains(normalizedQuery.ToLower())
+                    || a.Adress.ToLower().Contains(normalizedQuery.ToLower()))
                 .OrderBy(x => _random.Next())
                 .Take(5)
                 .ToList();
-
+           
             return adList;
         }
 
         public async Task<(List<Ad>, int)> SearchByQuery(string query, int page, int limit)
         {
-            var allAds = await _unitOfWork.Ads.FindRange(a => a.Title.ToLower().Contains(query.ToLower())
-                     || a.Category.ToLower().Contains(query.ToLower())
-                     || a.Subcategory.ToLower().Contains(query.ToLower())
-                     || a.Adress.ToLower().Contains(query.ToLower()));
+            var normalizedQuery = NormalizeQuery(query);
 
-            var ads =  allAds.OrderByDescending(x => x.Premium)
+            var allAds = await _unitOfWork.Ads.FindRange(a => a.Title.ToLower().Contains(normalizedQuery.ToLower())
+                || a.Category.ToLower().Contains(normalizedQuery.ToLower())
+                || a.Subcategory.ToLower().Contains(normalizedQuery.ToLower())
+                || a.Adress.ToLower().Contains(normalizedQuery.ToLower()));
+
+            var ads = allAds.OrderByDescending(x => x.Premium)
                 .ThenByDescending(x => x.Id).ToList();
 
             var paginatedData = ads.Skip((page - 1) * limit).Take(limit).ToList();
