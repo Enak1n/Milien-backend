@@ -14,7 +14,7 @@ namespace Milien_backend.Services
     {
         private readonly Context _context;
         private readonly ITokenService _tokenService;
-        private PasswordHasher<string> _passwordHasher = new ();
+        private PasswordHasher<string> _passwordHasher = new();
         private IMapper _mapper;
 
         public AuthService(Context context, ITokenService tokenService, IMapper mapper)
@@ -26,8 +26,8 @@ namespace Milien_backend.Services
 
         public async Task<AuthenticateResponse> Login(LoginRequest loginRequest)
         {
-            Customer user = await _context.Customers.FirstOrDefaultAsync(c => c.Login == loginRequest.Login);
-            var userFromLogin = await _context.Login.FirstOrDefaultAsync(u => u.Login == loginRequest.Login);
+            Customer user = await _context.Customers.FirstOrDefaultAsync(c => c.Login == loginRequest.Login || c.PhoneNumber == loginRequest.Login);
+            var userFromLogin = await _context.Login.FirstOrDefaultAsync(u => u.Login == user.Login);
             if (user == null)
             {
                 throw new Exception("Неверный логин или пароль!");
@@ -72,33 +72,27 @@ namespace Milien_backend.Services
             };
 
             var createdUser = _mapper.Map<UserRequest, Customer>(userRequest);
-            var confirmedCode = EmailService.SendEmailAsync(createdUser.Email, "Подтверждение регистрации", createdUser);
-            createdUser.ConfirmedCode = confirmedCode;
             createdUser.Role = Role.User;
+            createdUser.ComfimedEmail = true;
             _context.Customers.Add(createdUser);
             _context.Login.Add(login);
             await _context.SaveChangesAsync();
         }
 
-        public async Task ResetPassword(string email)
+        public async Task ResetPassword(string phone)
         {
-            var user = await _context.Customers.Where(u => u.Email == email).FirstOrDefaultAsync();
+            var user = await _context.Customers.Where(u => u.PhoneNumber == phone).FirstOrDefaultAsync();
 
-            if(user != null)
+            if (user == null)
             {
-                user.ConfirmedCode = EmailService.SendEmailAsync(email, "Сброс пароля", user);
-
-                await _context.SaveChangesAsync();
-                return;
+                throw new Exception("Пользователя с таким номером не существует!");
             }
-
-            throw new Exception("Пользователя с таким email не существует!");
         }
 
 
-        public async Task CreateNewPassword(string password, string email)
+        public async Task CreateNewPassword(string password, string phone)
         {
-            var user = await _context.Customers.Where(u => u.Email == email).FirstOrDefaultAsync();
+            var user = await _context.Customers.Where(u => u.PhoneNumber == phone).FirstOrDefaultAsync();
             var login = await _context.Login.Where(l => l.Login == user.Login).FirstOrDefaultAsync();
 
             string passForCustomer = _passwordHasher.HashPassword(null, password);
@@ -113,26 +107,17 @@ namespace Milien_backend.Services
         {
             var userForCheck = await _context.Customers.FirstOrDefaultAsync(c => c.Login == login);
 
-            if(userForCheck != null && userForCheck.ConfirmedCode == code)
+            if (userForCheck != null && userForCheck.ConfirmedCode == code)
             {
                 userForCheck.ComfimedEmail = true;
                 userForCheck.ConfirmedCode = null;
-                
+
                 await _context.SaveChangesAsync();
             }
             else
             {
                 throw new Exception("Неверный код подтверждения!");
             }
-        }
-
-        public async Task SendEmail(string login)
-        {
-            var user = await _context.Customers.FirstOrDefaultAsync(c => c.Login == login);
-            var confirmedCode = EmailService.SendEmailAsync(user.Email, "Подтверждение регистрации", user);
-            user.ConfirmedCode = confirmedCode;
-
-            await _context.SaveChangesAsync();
         }
     }
 }

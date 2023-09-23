@@ -25,28 +25,6 @@ namespace Milien_backend.Services
             return user.ComfimedEmail;
         }
 
-        public async Task<bool> CheckCode(string code, string email)
-        {
-            var user = await _context.Customers.FirstOrDefaultAsync(x => x.Email == email);
-
-            if(user.ConfirmedCode == code)
-            {
-                user.ConfirmedCode = null;
-                await _context.SaveChangesAsync();
-
-                return true;
-            }
-
-            return false;
-        }
-
-        public async Task<bool> CheckEmail(string email)
-        {
-            var emailForCheck = _context.Customers.FirstOrDefault(x => x.Email == email);
-
-            return emailForCheck == null ? true : false;
-        }
-
         public async Task<bool> CheckLogin(string login)
         {
             var loginForCheck = _context.Customers.FirstOrDefault(p => p.Login == login);
@@ -56,7 +34,7 @@ namespace Milien_backend.Services
 
         public async Task<bool> CheckPhoneNumber(string phoneNumber)
         {
-            var user = _context.Customers.FirstOrDefault(p => p.PhoneNumber == phoneNumber);
+            var user = await _context.Customers.FirstOrDefaultAsync(p => p.PhoneNumber == phoneNumber);
 
             return user == null ? true : false;
         }

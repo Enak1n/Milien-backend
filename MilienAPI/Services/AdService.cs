@@ -78,14 +78,14 @@ namespace MilienAPI.Services
             await _unitOfWork.Save();
         }
 
-        public async Task<List<Ad>> Filtration(int limit, int page, string category = null, string subcategory = null,
+        public async Task<List<Ad>> Filtration(int limit, int page, string tittle = null, string category = null, string subcategory = null,
             string town = null, int min = 0, int max = int.MaxValue)
         {
             var adsQuery = await _unitOfWork.Ads.FindRange(a =>
-                    (category == null || a.Category.ToLower() == category.ToLower())
+                    ((tittle == null || a.Title.ToLower().Contains(tittle.ToLower())) && (category == null || a.Category.ToLower() == category.ToLower())
                     &&(town == null || a.Adress.ToLower().Contains(town.ToLower()))
                     && (subcategory == null || a.Subcategory.ToLower() == subcategory.ToLower())
-                    && a.Price >= min && a.Price <= max);
+                    && (a.Price >= min && a.Price <= max)));
 
             var ads = adsQuery.OrderByDescending(x => x.Id);
 
@@ -162,25 +162,13 @@ namespace MilienAPI.Services
             return newServices;
         }
 
-        private static string NormalizeQuery(string query)
-        {
-            var normalizedQuery = new StringBuilder(query);
-
-            // Replace Е with Ё
-            normalizedQuery.Replace('Е', 'Ё').Replace('е', 'ё');
-            
-            return normalizedQuery.ToString();
-        }
-
         public async Task<List<Ad>> Search(string query)
         {
-            var normalizedQuery = NormalizeQuery(query);
-
             var allAds = await _unitOfWork.Ads.GetAll();
 
             var adList = allAds
-                .Where(a => a.Title.ToLower().Contains(normalizedQuery.ToLower())
-                    || a.Adress.ToLower().Contains(normalizedQuery.ToLower()))
+                .Where(a => a.Title.ToLower().Contains(query.ToLower())
+                    || a.Adress.ToLower().Contains(query.ToLower()))
                 .OrderBy(x => _random.Next())
                 .Take(5)
                 .ToList();
@@ -190,12 +178,10 @@ namespace MilienAPI.Services
 
         public async Task<(List<Ad>, int)> SearchByQuery(string query, int page, int limit)
         {
-            var normalizedQuery = NormalizeQuery(query);
-
-            var allAds = await _unitOfWork.Ads.FindRange(a => a.Title.ToLower().Contains(normalizedQuery.ToLower())
-                || a.Category.ToLower().Contains(normalizedQuery.ToLower())
-                || a.Subcategory.ToLower().Contains(normalizedQuery.ToLower())
-                || a.Adress.ToLower().Contains(normalizedQuery.ToLower()));
+            var allAds = await _unitOfWork.Ads.FindRange(a => a.Title.ToLower().Contains(query.ToLower())
+                || a.Category.ToLower().Contains(query.ToLower())
+                || a.Subcategory.ToLower().Contains(query.ToLower())
+                || a.Adress.ToLower().Contains(query.ToLower()));
 
             var ads = allAds.OrderByDescending(x => x.Premium)
                 .ThenByDescending(x => x.Id).ToList();

@@ -121,14 +121,13 @@ namespace MilienAPI.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Filtration(int limit, int page, string category = null, string subcategory = null,
+        public async Task<IActionResult> Filtration(int limit, int page, string tittle = null, string category = null, string subcategory = null,
             string town = null, int min = 0, int max = int.MaxValue)
         {
-            var allAds = await _unitOfWork.Ads.GetAll();
-            var ads = await _adService.Filtration(limit, page, category, subcategory, town,
+            var ads = await _adService.Filtration(limit, page, tittle, category, subcategory, town,
             min, max);
 
-            Response.Headers.Add("count", $"{allAds.Count}");
+            Response.Headers.Add("count", $"{ads.Count}");
             return Ok(ads);
         }
 

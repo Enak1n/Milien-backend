@@ -34,7 +34,7 @@ namespace Milien_backend.Controllers
             var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken);
             var username = principal.Identity.Name;
 
-            var currentIdentityUser = _context.Login.SingleOrDefault(u => u.Login == username);
+            var currentIdentityUser = _context.Login.SingleOrDefault(u => u.Login == username );
 
             if (currentIdentityUser is null || currentIdentityUser.RefreshToken != refreshToken
                  || currentIdentityUser.RefreshTokenExpiryTime <= DateTime.Now)

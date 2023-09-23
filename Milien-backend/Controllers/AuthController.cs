@@ -40,24 +40,11 @@ namespace Milien_backend.Controllers
         }
 
         [HttpGet]
-        [Route("check_code")]
-        public async Task<bool> CheckCode(string code, string email)
-        {
-            return await _availabilityService.CheckCode(code, email);
-        }
-
-        [HttpGet]
-        [Route("check_email")]
-        public async Task<bool> CheckEmail(string email)
-        {
-            return await _availabilityService.CheckEmail(email);
-        }
-
-        [HttpGet]
         [Route("check_phone")]
         public async Task<IActionResult> CheckPhone(string phoneNumber)
         {
-            if (await _availabilityService.CheckPhoneNumber(phoneNumber))
+            string updatedNumber = "8" + phoneNumber.Substring(1);
+            if (await _availabilityService.CheckPhoneNumber(updatedNumber))
             {
                 var options = new RestClientOptions("https://lite-mobileid.beeline.ru")
                 {
@@ -176,7 +163,27 @@ namespace Milien_backend.Controllers
             try
             {
                 await _authService.ResetPassword(email);
-                return Ok();
+
+                string phoneNumber = '7' + email.Substring(1);
+                var options = new RestClientOptions("https://lite-mobileid.beeline.ru")
+                {
+                    MaxTimeout = -1,
+                };
+                var client = new RestClient(options);
+                var request = new RestRequest("/lite-auth", Method.Post);
+                request.AddHeader("Content-Type", "application/json");
+                request.AddHeader("Authorization", "Basic TWlsbGlvbl9MaXRlQXBpOkZaaEhXRDQ0dk9kTzNuVVM=");
+                var body = @"{
+                            " + "\n" +
+                                @"    ""response_type"": ""polling"",
+                            " + "\n" +
+                                            $@"    ""msisdn"": ""{phoneNumber}""
+                            " + "\n" +
+                @"}";
+                request.AddStringBody(body, DataFormat.Json);
+                RestResponse response = await client.ExecuteAsync(request);
+
+                return Ok(response.Content);
             }
             catch (Exception ex)
             {
@@ -190,21 +197,6 @@ namespace Milien_backend.Controllers
         {
             await _authService.CreateNewPassword(password, email);
             return Ok();
-        }
-
-        [HttpGet]
-        [Route("send_email")]
-        public async Task<IActionResult> SendEmail(string login)
-        {
-            try
-            {
-                await _authService.SendEmail(login);
-                return Ok();
-            }
-            catch
-            {
-                return BadRequest("Ошибка при отправке письма!");
-            }
         }
     }
 }
